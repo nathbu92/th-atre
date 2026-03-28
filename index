@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Vindows OS</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#0078d4;--accent2:#40a9ff;--red:#e81123;--green:#107c10;--orange:#ff8c00;
+  --purple:#881798;--taskbar-h:48px;--win-bg:#1e1e1e;
+}
+*{margin:0;padding:0;box-sizing:border-box;user-select:none;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#000;overflow:hidden;width:100vw;height:100vh;cursor:default;}
+
+/* ============ SCREENS ============ */
+.screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:100;}
+.screen.active{display:flex;}
+
+/* ============ POST (BIOS/boot) ============ */
+#s-post{background:#000;}
+#s-post pre{color:#aaa;font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.7;white-space:pre;}
+#s-post .post-press{color:#fff;font-size:13px;margin-top:30px;letter-spacing:1px;animation:blink 1s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ============ LANGUAGE ============ */
+#s-lang{background:radial-gradient(ellipse at 40% 30%,#003c6e 0%,#001428 60%,#000 100%);}
+.lang-logo{font-family:'VT323',monospace;font-size:58px;color:#fff;letter-spacing:6px;margin-bottom:2px;}
+.lang-logo b{color:var(--accent2);}
+.lang-voice{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px 20px;margin-bottom:22px;color:rgba(255,255,255,.45);font-size:13px;font-style:italic;text-align:center;max-width:480px;}
+.lang-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:520px;}
+.lang-opt{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.7);padding:13px 8px;font-size:12px;cursor:pointer;text-align:center;border-radius:4px;transition:all .12s;}
+.lang-opt:hover{background:rgba(0,120,212,.3);border-color:var(--accent);}
+.lang-opt.sel{background:rgba(0,120,212,.45);border-color:var(--accent);color:#fff;}
+.lang-next{margin-top:20px;padding:11px 44px;background:var(--accent);border:none;color:#fff;font-size:13px;cursor:pointer;border-radius:3px;transition:background .12s;font-family:'Segoe UI',sans-serif;}
+.lang-next:hover{background:#106ebe;}
+
+/* ============ BOOT ============ */
+#s-boot{background:#000;}
+.boot-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:60px;}
+.boot-logo{font-family:'VT323',monospace;font-size:68px;color:#fff;letter-spacing:10px;}
+.boot-logo b{color:var(--accent2);}
+.boot-spinner{width:44px;height:44px;position:relative;}
+.boot-spinner::after{content:'';position:absolute;inset:0;border-radius:50%;border:3px solid rgba(255,255,255,.1);border-top-color:#fff;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.boot-msg{color:rgba(255,255,255,.25);font-size:11px;letter-spacing:2px;font-family:'Share Tech Mono',monospace;margin-top:16px;}
+
+/* ============ CREATE ACCOUNT ============ */
+#s-account{background:linear-gradient(160deg,#001428 0%,#002a50 40%,#001428 100%);}
+.acc-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:32px 40px;width:420px;display:flex;flex-direction:column;gap:16px;}
+.acc-card h2{color:#fff;font-size:17px;font-weight:400;margin-bottom:4px;}
+.acc-card p{color:rgba(255,255,255,.35);font-size:12px;line-height:1.6;margin-top:-8px;}
+.acc-voice-box{background:rgba(0,120,212,.08);border:1px solid rgba(0,120,212,.2);border-radius:4px;padding:9px 14px;color:var(--accent2);font-size:12px;font-style:italic;}
+.acc-label{color:rgba(255,255,255,.5);font-size:11px;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:4px;}
+.acc-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:3px;padding:10px 12px;color:#fff;font-size:13px;outline:none;font-family:'Segoe UI',sans-serif;transition:border-color .15s;}
+.acc-input:focus{border-color:var(--accent);}
+.acc-input::placeholder{color:rgba(255,255,255,.2);}
+.acc-error{color:#ff6060;font-size:12px;min-height:16px;}
+.acc-btn{background:var(--accent);border:none;color:#fff;padding:11px;border-radius:3px;font-size:13px;font-weight:600;cursor:pointer;transition:background .12s;font-family:'Segoe UI',sans-serif;width:100%;}
+.acc-btn:hover{background:#106ebe;}
+
+/* ============ LOGIN ============ */
+#s-login{background:linear-gradient(160deg,#001020 0%,#002040 40%,#001020 100%);}
+.login-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 60% 25%,rgba(0,120,212,.12) 0%,transparent 55%);}
+.login-wrap{position:relative;display:flex;flex-direction:column;align-items:center;}
+.login-time{color:#fff;font-size:82px;font-weight:200;letter-spacing:-2px;line-height:1;}
+.login-date{color:rgba(255,255,255,.5);font-size:14px;margin-bottom:48px;}
+.login-avatar{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#003a70);display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:12px;box-shadow:0 4px 20px rgba(0,0,0,.5);}
+.login-name{color:#fff;font-size:19px;font-weight:300;margin-bottom:4px;}
+.login-sub{color:rgba(255,255,255,.3);font-size:12px;margin-bottom:20px;}
+.login-field{position:relative;}
+.login-input{width:280px;padding:11px 46px 11px 14px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:3px;color:#fff;font-size:13px;outline:none;font-family:'Segoe UI',sans-serif;transition:border-color .15s;}
+.login-input:focus{border-color:var(--accent);}
+.login-input::placeholder{color:rgba(255,255,255,.3);}
+.login-go{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:#fff;width:30px;height:30px;border-radius:3px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .12s;}
+.login-go:hover{background:var(--accent);}
+.login-hint{color:rgba(255,255,255,.2);font-size:11px;margin-top:8px;text-align:center;}
+
+/* ============ DESKTOP ============ */
+#s-desktop{display:none;position:fixed;inset:0;}
+#s-desktop.active{display:block;}
+#desk-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0a2a5e 0%,#1a4a9e 35%,#2a6ac0 55%,#0a2a5e 100%);overflow:hidden;}
+#desk-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 60% 30%,rgba(255,255,255,.07) 0%,transparent 60%);}
+
+/* Desktop icons */
+.desk-icons{position:absolute;top:16px;left:16px;display:flex;flex-direction:column;gap:2px;}
+.d-icon{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border-radius:4px;cursor:pointer;width:80px;transition:background .1s;}
+.d-icon:hover{background:rgba(255,255,255,.12);}
+.d-icon.sel{background:rgba(0,120,212,.35);outline:1px solid rgba(0,120,212,.6);}
+.d-icon-g{font-size:36px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.7));}
+.d-icon-l{color:#fff;font-size:11px;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.9);line-height:1.3;}
+
+/* ============ TASKBAR ============ */
+#taskbar{position:absolute;bottom:0;left:0;right:0;height:var(--taskbar-h);z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(20px) saturate(180%);border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;}
+.tb-start{width:var(--taskbar-h);height:var(--taskbar-h);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .12s;}
+.tb-start:hover{background:rgba(255,255,255,.08);}
+.tb-start svg{width:22px;height:22px;}
+.tb-center{flex:1;display:flex;align-items:center;justify-content:center;gap:2px;}
+.tb-btn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:3px;cursor:pointer;position:relative;transition:background .1s;}
+.tb-btn:hover{background:rgba(255,255,255,.1);}
+.tb-btn.open{background:rgba(255,255,255,.12);}
+.tb-btn.open::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:16px;height:3px;background:var(--accent2);border-radius:2px;}
+.tb-icon{font-size:20px;}
+.tb-notif{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red);animation:nblink 1.2s ease-in-out infinite;}
+@keyframes nblink{0%,100%{opacity:1}50%{opacity:.4}}
+.tb-right{display:flex;align-items:center;gap:4px;padding:0 12px;color:rgba(255,255,255,.7);font-size:11px;}
+.tb-ico{cursor:pointer;padding:5px;border-radius:3px;transition:background .1s;font-size:14px;}
+.tb-ico:hover{background:rgba(255,255,255,.1);}
+#tb-clock{text-align:right;line-height:1.6;cursor:pointer;padding:4px 8px;border-radius:3px;font-size:11px;}
+#tb-clock:hover{background:rgba(255,255,255,.1);}
+
+/* ============ CADENAS BAR ============ */
+#cadenas-bar{position:absolute;top:0;left:50%;transform:translateX(-50%);display:none;align-items:center;gap:24px;background:rgba(0,0,0,.75);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-top:none;border-radius:0 0 10px 10px;padding:8px 28px;z-index:300;}
+.cad{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;transition:opacity .3s;}
+.cad.green{color:#2ecc71;}
+.cad.red{color:#ff4444;animation:cadRed .8s ease-in-out infinite;}
+@keyframes cadRed{0%,100%{opacity:1}50%{opacity:.6}}
+.cad.dim{opacity:.2;animation:none;}
+.cad-sub{font-weight:400;font-size:11px;opacity:.6;}
+
+/* ============ WINDOWS ============ */
+.win{position:absolute;border-radius:0;box-shadow:0 24px 60px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.06);display:none;flex-direction:column;overflow:hidden;z-index:50;}
+.win.open{display:flex;}
+.win-tb{background:#2c2c2c;height:32px;display:flex;align-items:center;padding:0 12px;gap:8px;cursor:move;flex-shrink:0;border-bottom:1px solid rgba(0,0,0,.4);}
+.win-title{color:rgba(255,255,255,.7);font-size:12px;flex:1;}
+.win-ctrl{display:flex;margin-left:auto;}
+.wc{width:46px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:background .1s;color:rgba(255,255,255,.7);}
+.wc:hover{background:rgba(255,255,255,.12);}
+.wc.cl:hover{background:#c42b1c;color:#fff;}
+.win-body{flex:1;overflow:hidden;}
+.win-resize{position:absolute;bottom:0;right:0;width:14px;height:14px;cursor:se-resize;z-index:5;background:linear-gradient(135deg,transparent 50%,rgba(255,255,255,.15) 50%);}
+
+/* ============ BROWSER ============ */
+#win-browser{top:30px;left:80px;width:960px;height:640px;}
+.br-bar{background:#1e1e1e;padding:6px 8px;display:flex;align-items:center;gap:6px;flex-shrink:0;border-bottom:1px solid #111;}
+.nav-btn{background:none;border:none;color:rgba(255,255,255,.4);font-size:16px;cursor:pointer;padding:5px 8px;border-radius:3px;transition:all .1s;}
+.nav-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+.url-wrap{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:5px 14px;display:flex;align-items:center;gap:7px;transition:border-color .15s;}
+.url-wrap:focus-within{border-color:var(--accent);}
+.padlock{font-size:11px;flex-shrink:0;}
+.padlock.g{color:#2ecc71;}.padlock.r{color:#ff4444;}.padlock.n{color:rgba(255,255,255,.25);}
+.url-text{color:rgba(255,255,255,.65);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+.br-content{flex:1;overflow-y:auto;background:#fff;}
+.page{width:100%;min-height:100%;display:none;}
+.page.show{display:block;}
+
+/* ============ GLOUGLOU HOME ============ */
+#p-home{background:linear-gradient(180deg,#0d1d35 0%,#162d50 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:40px;}
+.gg-logo{font-size:66px;font-weight:700;margin-bottom:4px;letter-spacing:-2px;}
+.gg-logo .g{color:#4285f4;}.gg-logo .l{color:#ea4335;}.gg-logo .o1{color:#fbbc05;}.gg-logo .o2{color:#4285f4;}.gg-logo .g2{color:#34a853;}.gg-logo .l2{color:#ea4335;}.gg-logo .o3{color:#fbbc05;}.gg-logo .u{color:#4285f4;}
+.gg-tagline{color:rgba(255,255,255,.3);font-size:11px;letter-spacing:3px;margin-bottom:30px;}
+.gg-search-wrap{display:flex;align-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:28px;padding:10px 18px;width:500px;gap:10px;transition:all .2s;}
+.gg-search-wrap:focus-within{border-color:#4285f4;background:rgba(255,255,255,.12);box-shadow:0 0 0 3px rgba(66,133,244,.15);}
+.gg-input{flex:1;background:none;border:none;color:#fff;font-size:14px;outline:none;font-family:'Segoe UI',sans-serif;}
+.gg-input::placeholder{color:rgba(255,255,255,.25);}
+.gg-btn{background:#4285f4;border:none;color:#fff;padding:7px 18px;border-radius:18px;font-size:12px;cursor:pointer;white-space:nowrap;font-family:'Segoe UI',sans-serif;font-weight:600;transition:background .12s;}
+.gg-btn:hover{background:#3367d6;}
+.gg-note{color:rgba(255,255,255,.2);font-size:11px;margin-top:16px;text-align:center;}
+/* GlouGlou modal: create password */
+#gg-pw-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;align-items:center;justify-content:center;}
+#gg-pw-modal.show{display:flex;}
+.gg-modal-box{background:#1e2d40;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:30px 36px;width:380px;display:flex;flex-direction:column;gap:14px;}
+.gg-modal-box h3{color:#fff;font-size:16px;font-weight:400;}
+.gg-modal-box p{color:rgba(255,255,255,.4);font-size:12px;line-height:1.6;}
+.gg-modal-voice{background:rgba(66,133,244,.1);border:1px solid rgba(66,133,244,.2);border-radius:4px;padding:8px 12px;color:var(--accent2);font-size:12px;font-style:italic;}
+.gg-modal-input{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:3px;padding:10px 12px;color:#fff;font-size:13px;outline:none;font-family:'Segoe UI',sans-serif;transition:border-color .15s;}
+.gg-modal-input:focus{border-color:#4285f4;}
+.gg-modal-input::placeholder{color:rgba(255,255,255,.2);}
+.gg-modal-err{color:#ff6060;font-size:12px;min-height:14px;}
+.gg-modal-btn{background:#4285f4;border:none;color:#fff;padding:11px;border-radius:3px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Segoe UI',sans-serif;transition:background .12s;}
+.gg-modal-btn:hover{background:#3367d6;}
+
+/* Search results */
+#p-results{background:#f5f5f5;min-height:100%;padding:18px 24px;}
+.sr-bar{font-size:12px;color:#888;border-bottom:1px solid #e0e0e0;padding-bottom:10px;margin-bottom:14px;}
+.sr-item{margin-bottom:20px;cursor:pointer;}
+.sr-url{color:#006621;font-size:12px;font-family:'Share Tech Mono',monospace;margin-bottom:2px;}
+.sr-url.bad{color:#a00;}
+.sr-title{color:#1a0dab;font-size:16px;margin-bottom:3px;}
+.sr-item:hover .sr-title{text-decoration:underline;}
+.sr-desc{color:#545454;font-size:13px;line-height:1.4;}
+.sr-ad-label{display:inline-block;background:#f0e0a0;border:1px solid #c0a000;border-radius:2px;padding:1px 4px;font-size:10px;color:#7a6000;margin-right:6px;}
+.sr-sep{border:none;border-top:1px solid #e0e0e0;margin:10px 0;}
+
+/* ============ STIHL SITE ============ */
+#p-stihl{background:#f4f4f4;min-height:100%;}
+.st-hdr{background:#ff8c00;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;}
+.st-logo{font-size:26px;font-weight:900;color:#fff;letter-spacing:-1px;font-family:'Segoe UI',sans-serif;}
+.st-nav{display:flex;gap:18px;}
+.st-nav a{color:#fff;text-decoration:none;font-size:13px;font-weight:600;cursor:pointer;opacity:.9;}
+.st-nav a:hover{opacity:1;text-decoration:underline;}
+.st-hero{background:linear-gradient(135deg,#111,#333);padding:48px 24px;text-align:center;color:#fff;}
+.st-hero h1{font-size:32px;font-weight:700;margin-bottom:8px;}
+.st-hero p{color:#aaa;font-size:13px;margin-bottom:20px;}
+.st-cta{background:#ff8c00;color:#fff;border:none;padding:12px 28px;font-size:13px;font-weight:700;cursor:pointer;border-radius:2px;}
+.st-info{background:#fffbe6;border-left:4px solid #ff8c00;padding:12px 20px;margin:16px 20px;font-size:13px;color:#7a4000;}
+.st-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:20px;}
+.st-card{background:#fff;border:1px solid #e0e0e0;padding:18px;text-align:center;}
+.st-card-ico{font-size:44px;margin-bottom:8px;}
+.st-card h3{font-size:14px;font-weight:700;color:#222;margin-bottom:4px;}
+.st-card p{font-size:12px;color:#777;margin-bottom:10px;line-height:1.4;}
+.st-price{font-size:22px;font-weight:900;color:#ff8c00;margin-bottom:8px;}
+.st-buy{background:#ff8c00;border:none;padding:9px 20px;font-weight:700;cursor:pointer;font-size:12px;color:#fff;}
+.st-buy:hover{background:#e07800;}
+.st-popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;align-items:center;justify-content:center;}
+.st-popup-overlay.show{display:flex;}
+.st-popup{background:#fff;border:2px solid #ff8c00;border-radius:4px;padding:24px;width:360px;text-align:center;}
+.st-popup h3{font-size:16px;font-weight:700;color:#ff8c00;margin-bottom:8px;}
+.st-popup p{font-size:13px;color:#555;line-height:1.5;margin-bottom:16px;}
+.st-popup-btn{background:#ff8c00;color:#fff;border:none;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;margin:0 4px;}
+.st-popup-btn.sec{background:#888;}
+
+/* ============ LES 9 BELGES SITE ============ */
+#p-belges{background:#fff;min-height:100%;}
+.b9-hdr{background:linear-gradient(90deg,#5a0a9e,#8a1cd0);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
+.b9-logo{font-size:18px;font-weight:900;color:#fff;letter-spacing:2px;}
+.b9-badges{display:flex;align-items:center;gap:8px;}
+.b9-sale{background:#ff3333;color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;animation:saleBlink .7s infinite;}
+@keyframes saleBlink{0%,100%{opacity:1}50%{opacity:.5}}
+.b9-ticker-wrap{background:#111;overflow:hidden;height:28px;display:flex;align-items:center;}
+.b9-ticker{display:inline-block;white-space:nowrap;color:#ff0;font-size:11px;font-weight:700;animation:ticker 20s linear infinite;letter-spacing:1px;}
+@keyframes ticker{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+
+/* B9 ALERT OVERLAY on site */
+#b9-site-alert{display:none;background:#ff4444;color:#fff;padding:8px 14px;font-size:12px;font-weight:700;text-align:center;align-items:center;justify-content:center;gap:8px;}
+#b9-site-alert.show{display:flex;}
+#b9-site-alert .b9-alert-close{cursor:pointer;font-size:16px;margin-left:8px;opacity:.7;}
+#b9-site-alert .b9-alert-close:hover{opacity:1;}
+
+/* B9 FICHE CLIENT */
+.b9-form-section{background:linear-gradient(135deg,#5a0a9e,#9030e0);padding:24px 20px;color:#fff;}
+.b9-form-section h2{font-size:17px;font-weight:700;margin-bottom:4px;}
+.b9-form-section p{font-size:12px;opacity:.7;margin-bottom:16px;}
+.b9-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.b9-field{display:flex;flex-direction:column;gap:4px;}
+.b9-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;opacity:.6;}
+.b9-inp{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:3px;padding:9px 10px;color:#fff;font-size:12px;outline:none;font-family:'Segoe UI',sans-serif;}
+.b9-inp:focus{border-color:#ff0;background:rgba(255,255,255,.18);}
+.b9-inp::placeholder{color:rgba(255,255,255,.25);}
+.b9-conn-btn{width:100%;margin-top:12px;background:#ff3333;border:none;color:#fff;padding:12px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:1px;font-family:'Segoe UI',sans-serif;border-radius:2px;}
+.b9-conn-btn:hover{background:#cc0000;}
+.b9-form-err{color:#ffd700;font-size:12px;min-height:14px;margin-top:4px;}
+
+/* B9 fermer fenêtres popup */
+#b9-fenetre-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:900;align-items:center;justify-content:center;}
+#b9-fenetre-popup.show{display:flex;}
+.b9-fen-box{background:#1a0030;border:2px solid #ff0;border-radius:4px;padding:24px;width:380px;text-align:center;}
+.b9-fen-box h3{color:#ff0;font-size:16px;font-weight:700;margin-bottom:10px;}
+.b9-fen-box p{color:rgba(255,255,255,.7);font-size:13px;line-height:1.6;margin-bottom:14px;}
+.b9-fen-close{background:#ff0;color:#000;border:none;padding:10px 24px;font-size:13px;font-weight:900;cursor:pointer;}
+
+/* B9 SHOP */
+.b9-panier-bar{background:linear-gradient(90deg,#5a0a9e,#7a18c0);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;color:#fff;font-size:13px;}
+.b9-panier-total{font-weight:700;font-size:16px;}
+.b9-panier-btn{background:#ff3333;border:none;color:#fff;padding:7px 16px;font-size:11px;font-weight:800;cursor:pointer;}
+.b9-warning{background:#fff8dc;border-left:4px solid #ffc107;margin:10px 16px;padding:9px 12px;font-size:11px;color:#7a5a00;}
+.b9-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px 16px;}
+.b9-card{border:1px solid #e0e0e0;padding:12px;text-align:center;position:relative;}
+.b9-badge{position:absolute;top:6px;right:6px;background:#ff3333;color:#fff;font-size:9px;font-weight:900;padding:2px 5px;}
+.b9-made{position:absolute;top:6px;left:6px;font-size:10px;}
+.b9-ico{font-size:38px;margin-bottom:6px;}
+.b9-card h3{font-size:11px;color:#333;font-weight:700;margin-bottom:3px;}
+.b9-old{font-size:10px;color:#bbb;text-decoration:line-through;}
+.b9-price{font-size:18px;font-weight:900;color:#5a0a9e;}
+.b9-add{background:linear-gradient(90deg,#5a0a9e,#8a1cd0);border:none;color:#fff;padding:7px 14px;font-size:10px;font-weight:700;cursor:pointer;margin-top:6px;border-radius:2px;width:100%;}
+.b9-add:hover{background:#7a18c0;}
+.b9-add.inpanier{background:#2ecc71;}
+
+/* B9 Countdown */
+.b9-cd-wrap{background:#111;color:#ff0;font-size:13px;font-weight:700;padding:6px;text-align:center;letter-spacing:1px;}
+
+/* ============ ANTIVIRUS POPUP ============ */
+#win-av{position:fixed;bottom:60px;right:16px;width:340px;background:#1a1a1a;border:2px solid #c00;border-radius:4px;z-index:600;display:none;box-shadow:0 12px 40px rgba(200,0,0,.4);animation:avSlide .3s cubic-bezier(.2,.8,.3,1);}
+@keyframes avSlide{from{transform:translateX(110%)}to{transform:none}}
+.av-hdr{background:linear-gradient(90deg,#880000,#cc0000);padding:9px 12px;display:flex;align-items:center;gap:8px;}
+.av-hdr-ico{font-size:18px;animation:shake .2s infinite;}
+@keyframes shake{0%,100%{transform:translateX(0)}33%{transform:translateX(-2px)}66%{transform:translateX(2px)}}
+.av-hdr-title{color:#fff;font-size:12px;font-weight:700;flex:1;}
+.av-x{background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:15px;}
+.av-body{padding:12px;}
+.av-prog-wrap{background:#2a2a2a;height:5px;margin:8px 0;}
+.av-prog{height:100%;background:linear-gradient(90deg,#c00,#ff6666);width:0;transition:width 3s ease-out;}
+.av-status{color:#ff8888;font-size:11px;font-family:'Share Tech Mono',monospace;margin-bottom:8px;}
+.av-threat{background:rgba(200,0,0,.1);border:1px solid rgba(200,0,0,.2);padding:8px 10px;margin-bottom:6px;}
+.av-threat-n{color:#ff6666;font-size:11px;font-weight:700;}
+.av-threat-p{color:#555;font-size:10px;margin-top:1px;font-family:'Share Tech Mono',monospace;}
+.av-btns{display:flex;gap:7px;margin-top:10px;}
+.av-fix{flex:1;background:#c00;border:none;color:#fff;padding:8px;font-size:12px;font-weight:700;cursor:pointer;}
+.av-fix:hover{background:#e00;}
+.av-skip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:8px 12px;font-size:11px;cursor:pointer;}
+
+/* AV OK */
+#win-avok{position:fixed;bottom:60px;right:16px;width:290px;background:#0d1d0d;border:2px solid #2ecc71;border-radius:4px;z-index:590;display:none;}
+.avok-hdr{background:linear-gradient(90deg,#0a3a1a,#166634);padding:9px 12px;display:flex;align-items:center;gap:8px;}
+.avok-title{color:#fff;font-size:12px;font-weight:700;flex:1;}
+.avok-body{padding:16px;text-align:center;}
+.avok-ico{font-size:36px;margin-bottom:8px;}
+.avok-msg{color:#2ecc71;font-size:13px;font-weight:700;margin-bottom:4px;}
+.avok-sub{color:rgba(255,255,255,.35);font-size:11px;line-height:1.5;}
+
+/* AV PROPOSE (non-installed state) */
+#win-av-propose{position:fixed;bottom:60px;right:16px;width:310px;background:#1a1a2a;border:1px solid rgba(0,120,212,.4);border-radius:4px;z-index:595;display:none;animation:avSlide .3s cubic-bezier(.2,.8,.3,1);}
+.avp-hdr{background:rgba(0,120,212,.2);padding:9px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(0,120,212,.2);}
+.avp-title{color:var(--accent2);font-size:12px;font-weight:700;flex:1;}
+.avp-body{padding:12px;}
+.avp-msg{color:rgba(255,255,255,.6);font-size:12px;line-height:1.6;margin-bottom:10px;}
+.avp-btns{display:flex;gap:8px;}
+.avp-install{background:var(--accent);border:none;color:#fff;padding:8px 14px;font-size:12px;cursor:pointer;font-weight:600;}
+.avp-install:hover{background:#106ebe;}
+.avp-later{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:8px 14px;font-size:11px;cursor:pointer;}
+
+/* ============ TERMINAL ============ */
+#win-terminal{top:70px;left:160px;width:720px;height:440px;}
+.term-body{flex:1;background:#0c0c0c;padding:12px;overflow-y:auto;font-family:'Share Tech Mono',monospace;font-size:13px;line-height:1.6;}
+.tl{display:block;margin-bottom:1px;}
+.tg{color:#2ecc71;}.tb{color:#40a9ff;}.tr{color:#ff6666;}.ty{color:#ffd700;}.td{color:#555;}.tw{color:#fff;}
+.term-in-row{background:#000;padding:5px 12px;border-top:1px solid #1a1a1a;display:flex;align-items:center;gap:4px;}
+.term-prompt{color:#2ecc71;font-family:'Share Tech Mono',monospace;font-size:13px;white-space:nowrap;}
+.term-in{flex:1;background:transparent;border:none;color:#fff;font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;}
+
+/* ============ TERMINAL REPAIR MODE ============ */
+#s-repair{background:#000;display:none;position:fixed;inset:0;flex-direction:column;z-index:500;}
+#s-repair.active{display:flex;}
+#repair-body{flex:1;padding:14px;overflow-y:auto;font-family:'Share Tech Mono',monospace;font-size:13px;line-height:1.7;color:#00ff00;}
+#repair-in-row{background:#000;border-top:1px solid #1a1a1a;padding:5px 14px;display:flex;align-items:center;gap:4px;}
+#repair-prompt{color:#00ff00;font-family:'Share Tech Mono',monospace;font-size:13px;}
+#repair-in{flex:1;background:transparent;border:none;color:#00ff00;font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;}
+
+/* ============ DORKBOT POPUP ============ */
+#win-dorkbot{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;background:#080012;border:2px solid #8800ff;border-radius:4px;z-index:700;display:none;box-shadow:0 0 60px rgba(136,0,255,.5);}
+.dk-hdr{background:linear-gradient(90deg,#3a0080,#7a00cc);padding:12px 16px;display:flex;align-items:center;gap:10px;}
+.dk-ico{font-size:22px;}
+.dk-title{color:#fff;font-size:14px;font-weight:700;flex:1;font-family:'VT323',monospace;letter-spacing:2px;}
+.dk-body{padding:18px;}
+.dk-msg{color:rgba(255,255,255,.8);font-size:13px;line-height:1.7;margin-bottom:12px;}
+.dk-code{font-family:'Share Tech Mono',monospace;background:rgba(136,0,255,.1);border:1px solid rgba(136,0,255,.2);padding:8px 12px;color:#cc88ff;font-size:11px;margin-bottom:12px;line-height:1.6;}
+.dk-btns{display:flex;gap:8px;}
+.dk-yes{flex:1;background:linear-gradient(90deg,#5500aa,#8800ff);border:none;color:#fff;padding:10px;font-size:12px;font-weight:700;cursor:pointer;}
+.dk-no{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:10px;font-size:12px;cursor:pointer;}
+
+/* ============ ATTACK OVERLAY ============ */
+#attack-overlay{position:fixed;inset:0;background:#000;z-index:800;display:none;flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;}
+#attack-overlay.show{display:flex;}
+#attack-lines{color:#00ff00;font-size:11px;line-height:1.8;text-align:left;max-width:600px;width:100%;padding:20px;}
+.atk-line{display:block;animation:fadeIn .1s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+#attack-bsod{display:none;position:fixed;inset:0;background:#0078d7;z-index:900;align-items:center;justify-content:center;flex-direction:column;}
+#attack-bsod.show{display:flex;}
+#attack-bsod .bsod-ico{font-size:80px;margin-bottom:20px;}
+#attack-bsod h1{color:#fff;font-size:28px;font-weight:300;margin-bottom:16px;}
+#attack-bsod p{color:rgba(255,255,255,.7);font-size:14px;text-align:center;line-height:1.8;max-width:500px;}
+#attack-bsod .bsod-qr{font-size:60px;margin-top:20px;opacity:.3;}
+#attack-bsod .bsod-pct{color:#fff;font-size:14px;margin-top:16px;font-family:'Share Tech Mono',monospace;}
+
+/* ============ SHORTCUTS ============ */
+#shortcuts-panel{position:fixed;bottom:58px;right:14px;background:rgba(8,12,20,.97);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:14px;z-index:400;display:none;min-width:300px;backdrop-filter:blur(16px);}
+#shortcuts-panel h4{color:rgba(255,255,255,.4);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.sc{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.sc-k{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:3px;padding:2px 7px;font-size:10px;font-family:'Share Tech Mono',monospace;color:#fff;min-width:28px;text-align:center;}
+.sc-d{color:rgba(255,255,255,.4);font-size:11px;}
+
+/* ============ TOAST ============ */
+#toast{position:fixed;bottom:62px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(20,20,28,.96);border:1px solid rgba(255,255,255,.1);color:#fff;padding:10px 20px;border-radius:3px;font-size:12px;z-index:800;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;backdrop-filter:blur(16px);}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ============ COPY-PASTE ASTUCE ============ */
+#win-copypaste{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:340px;background:#fffbe6;border:1px solid #ddd;border-radius:4px;z-index:600;display:none;box-shadow:0 8px 30px rgba(0,0,0,.4);}
+.cp-hdr{background:#2c2c2c;padding:8px 12px;display:flex;align-items:center;gap:6px;}
+.cp-title{color:#fff;font-size:12px;flex:1;}
+.cp-body{padding:18px;}
+.cp-msg{font-size:13px;color:#333;line-height:1.6;margin-bottom:12px;}
+.cp-tip{background:#f0f4ff;border-left:3px solid #4285f4;padding:10px 12px;font-size:12px;color:#333;line-height:1.6;}
+.cp-close{margin-top:12px;background:#4285f4;border:none;color:#fff;padding:9px 20px;font-size:12px;cursor:pointer;width:100%;}
+
+/* ============ RECALL ANTIVIRUS ============ */
+#win-recall{position:fixed;bottom:60px;right:16px;width:300px;background:#0d1a30;border:1px solid rgba(0,120,212,.4);border-radius:4px;z-index:595;display:none;animation:avSlide .3s ease;}
+.recall-hdr{background:rgba(0,120,212,.15);padding:9px 12px;display:flex;align-items:center;gap:8px;}
+.recall-title{color:var(--accent2);font-size:12px;font-weight:700;flex:1;}
+.recall-body{padding:12px;font-size:12px;color:rgba(255,255,255,.6);line-height:1.6;}
+</style>
+</head>
+<body>
+
+<!-- ===== POST / BIOS ===== -->
+<div class="screen active" id="s-post">
+<pre id="post-text"></pre>
+<div class="post-press" id="post-press" style="display:none;">Appuyez sur une touche pour continuer…</div>
+</div>
+
+<!-- ===== LANGUAGE ===== -->
+<div class="screen" id="s-lang">
+  <div class="lang-logo">VIND<b>OWS</b> OS</div>
+  <div style="color:rgba(255,255,255,.3);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;">Sélectionner votre langue</div>
+  <div class="lang-voice" id="lang-voice">Welcome please choose the wished language…</div>
+  <div class="lang-grid">
+    <div class="lang-opt" onclick="selLang(this,'en')">🇬🇧 English</div>
+    <div class="lang-opt" onclick="selLang(this,'de')">🇩🇪 Deutsch</div>
+    <div class="lang-opt" onclick="selLang(this,'es')">🇪🇸 Español</div>
+    <div class="lang-opt" onclick="selLang(this,'it')">🇮🇹 Italiano</div>
+    <div class="lang-opt" onclick="selLang(this,'nl')">🇧🇪 Nederlands</div>
+    <div class="lang-opt" onclick="selLang(this,'pt')">🇵🇹 Português</div>
+    <div class="lang-opt" onclick="selLang(this,'jp')">🇯🇵 日本語</div>
+    <div class="lang-opt sel" onclick="selLang(this,'fr')">🇫🇷 Français</div>
+  </div>
+  <button class="lang-next" onclick="startBoot()">Continuer →</button>
+</div>
+
+<!-- ===== BOOT ===== -->
+<div class="screen" id="s-boot">
+  <div class="boot-logo-wrap">
+    <div class="boot-logo">VIND<b>OWS</b></div>
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="boot-spinner"></div>
+      <div class="boot-msg" id="boot-msg">Démarrage…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CREATE ACCOUNT ===== -->
+<div class="screen" id="s-account">
+  <div style="font-family:'VT323',monospace;font-size:44px;color:#fff;letter-spacing:6px;margin-bottom:4px;">VIND<b style="color:var(--accent2);">OWS</b></div>
+  <div style="color:rgba(255,255,255,.3);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:24px;">Première utilisation — Configuration du compte</div>
+  <div class="acc-card">
+    <h2>Créer votre compte utilisateur</h2>
+    <p>Bienvenue sur Vindows OS. Veuillez créer un compte pour commencer.</p>
+    <div class="acc-voice-box" id="acc-voice">💻 Pour accéder à internet, veuillez d'abord créer un compte.</div>
+    <div>
+      <label class="acc-label">Votre prénom</label>
+      <input class="acc-input" id="acc-name" type="text" placeholder="Ex : Pénélope">
+    </div>
+    <div>
+      <label class="acc-label">Mot de passe</label>
+      <input class="acc-input" id="acc-pw" type="password" placeholder="Choisissez un mot de passe">
+    </div>
+    <div>
+      <label class="acc-label">Votre âge (en lettres)</label>
+      <input class="acc-input" id="acc-age" type="text" placeholder="Ex : vingt-deux">
+    </div>
+    <div class="acc-error" id="acc-err"></div>
+    <button class="acc-btn" onclick="createAccount()">Créer le compte →</button>
+  </div>
+</div>
+
+<!-- ===== LOGIN ===== -->
+<div class="screen" id="s-login">
+  <div class="login-bg"></div>
+  <div class="login-wrap">
+    <div class="login-time" id="login-clock">00:00</div>
+    <div class="login-date" id="login-date">—</div>
+    <div class="login-avatar">👤</div>
+    <div class="login-name" id="login-name-disp">Pénélope</div>
+    <div class="login-sub" id="login-sub-disp">Compte local</div>
+    <div class="login-field">
+      <input class="login-input" type="password" id="login-pw" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="login-go" onclick="doLogin()">→</button>
+    </div>
+    <div class="login-hint" id="login-hint">Laissez vide ou appuyez sur Entrée</div>
+  </div>
+</div>
+
+<!-- ===== REPAIR TERMINAL ===== -->
+<div id="s-repair">
+  <div style="background:#1a0000;padding:6px 14px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff4444;letter-spacing:1px;">
+    VINDOWS RECOVERY ENVIRONMENT — MODE RÉPARATION SYSTÈME
+  </div>
+  <div id="repair-body"></div>
+  <div id="repair-in-row">
+    <span id="repair-prompt">REPAIR:C:\&gt;&nbsp;</span>
+    <input id="repair-in" placeholder="" onkeydown="repairKey(event)">
+  </div>
+</div>
+
+<!-- ===== DESKTOP ===== -->
+<div id="s-desktop">
+  <div id="desk-bg"></div>
+
+  <!-- CADENAS BAR -->
+  <div id="cadenas-bar">
+    <div class="cad green dim" id="cad-green">🔒 <span id="cad-green-url">stihl.fr</span> <span class="cad-sub">— Site sécurisé</span></div>
+    <div class="cad red dim" id="cad-red">🔓 <span id="cad-red-url">les9belges.shop</span> <span class="cad-sub">— NON SÉCURISÉ</span></div>
+  </div>
+
+  <!-- Desktop icons -->
+  <div class="desk-icons">
+    <div class="d-icon" onclick="sel(this)" ondblclick="openBrowser()">
+      <div class="d-icon-g">🌐</div><div class="d-icon-l">Navigateur</div>
+    </div>
+    <div class="d-icon" onclick="sel(this)" ondblclick="openTerminal()">
+      <div class="d-icon-g">⬛</div><div class="d-icon-l">Terminal</div>
+    </div>
+    <div class="d-icon" onclick="sel(this)">
+      <div class="d-icon-g">🗑️</div><div class="d-icon-l">Corbeille</div>
+    </div>
+  </div>
+
+  <!-- TASKBAR -->
+  <div id="taskbar">
+    <div class="tb-start" onclick="toggleStart()">
+      <svg viewBox="0 0 22 22" fill="none"><rect x="1" y="1" width="9" height="9" fill="#f35325"/><rect x="12" y="1" width="9" height="9" fill="#81bc06"/><rect x="1" y="12" width="9" height="9" fill="#05a6f0"/><rect x="12" y="12" width="9" height="9" fill="#ffba08"/></svg>
+    </div>
+    <div class="tb-center">
+      <div class="tb-btn" id="tb-browser" onclick="toggleWin('win-browser','tb-browser')" style="display:none"><span class="tb-icon">🌐</span></div>
+      <div class="tb-btn" id="tb-terminal" onclick="toggleWin('win-terminal','tb-terminal')" style="display:none"><span class="tb-icon">⬛</span></div>
+      <div class="tb-btn" id="tb-av" onclick="showAV()" style="position:relative;">
+        <span class="tb-icon">🛡️</span>
+        <div class="tb-notif" id="av-dot" style="display:none"></div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-ico" onclick="toggleShortcuts()">⌨️</span>
+      <span class="tb-ico" id="wifi-ico" onclick="wifiClick()">📶</span>
+      <div id="tb-clock"></div>
+    </div>
+  </div>
+
+  <!-- START MENU -->
+  <div id="start-menu" style="display:none;position:absolute;bottom:48px;left:0;width:260px;background:rgba(8,14,24,.97);border:1px solid rgba(255,255,255,.1);border-top-right-radius:6px;z-index:300;padding:14px;">
+    <div style="color:rgba(255,255,255,.3);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;">VINDOWS OS</div>
+    <div class="sm-item" onclick="openBrowser();closeStart()">🌐 Navigateur</div>
+    <div class="sm-item" onclick="openTerminal();closeStart()">⬛ Terminal</div>
+    <div style="border-top:1px solid rgba(255,255,255,.06);margin:8px 0;"></div>
+    <div class="sm-item" style="color:rgba(255,100,100,.6);" onclick="closeStart();toast('⏻ Vindows s\'arrête… pour ne pas vraiment s\'arrêter.')">⏻ Arrêter</div>
+  </div>
+  <style>
+  .sm-item{padding:8px 10px;border-radius:3px;cursor:pointer;color:#fff;font-size:13px;transition:background .1s;}
+  .sm-item:hover{background:rgba(255,255,255,.08);}
+  </style>
+
+  <!-- ===== BROWSER WINDOW ===== -->
+  <div class="win" id="win-browser">
+    <div class="win-tb" id="wb-tb">
+      <div class="win-title" id="br-title">GlouGlou — Moteur de recherche</div>
+      <div class="win-ctrl">
+        <div class="wc mn" onclick="minWin('win-browser','tb-browser')">─</div>
+        <div class="wc mx">□</div>
+        <div class="wc cl" onclick="closeWin('win-browser','tb-browser')">✕</div>
+      </div>
+    </div>
+    <div class="br-bar">
+      <button class="nav-btn" onclick="navBack()">←</button>
+      <button class="nav-btn" onclick="navFwd()">→</button>
+      <button class="nav-btn" onclick="navRefresh()">↻</button>
+      <button class="nav-btn" onclick="navHome()">⌂</button>
+      <div class="url-wrap">
+        <span class="padlock n" id="padlock">🔍</span>
+        <span class="url-text" id="url-text">glouglou.fr</span>
+      </div>
+    </div>
+    <div class="br-content">
+
+      <!-- HOME PAGE -->
+      <div class="page show" id="p-home">
+        <div id="p-home-inner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:40px;background:linear-gradient(180deg,#0d1d35 0%,#162d50 100%);">
+          <div class="gg-logo"><span class="g">G</span><span class="l">l</span><span class="o1">o</span><span class="o2">u</span><span class="g2">G</span><span class="l2">l</span><span class="o3">o</span><span class="u">u</span></div>
+          <div class="gg-tagline">MOTEUR DE RECHERCHE · 100% BELGE 🇧🇪</div>
+          <div class="gg-search-wrap">
+            <span style="color:rgba(255,255,255,.25);font-size:15px;">🔍</span>
+            <input class="gg-input" id="gg-input" placeholder="Rechercher sur GlouGlou…" onkeydown="if(event.key==='Enter')doSearch()">
+            <button class="gg-btn" onclick="doSearch()">GlouGlou !</button>
+          </div>
+          <div class="gg-note" id="gg-note">Connectez-vous à GlouGlou pour sauvegarder vos recherches</div>
+          <!-- GlouGlou PW Modal trigger appears after first login -->
+          <div id="gg-login-prompt" style="display:none;margin-top:16px;">
+            <button onclick="document.getElementById('gg-pw-modal').classList.add('show')" style="background:rgba(66,133,244,.15);border:1px solid rgba(66,133,244,.3);color:var(--accent2);padding:9px 18px;font-size:12px;cursor:pointer;border-radius:3px;">Se connecter à GlouGlou →</button>
+          </div>
+          <div id="gg-results" style="display:none;margin-top:24px;width:520px;"></div>
+        </div>
+      </div>
+
+      <!-- SEARCH RESULTS -->
+      <div class="page" id="p-results">
+        <div style="background:#f5f5f5;min-height:100%;padding:14px 22px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div class="gg-logo" style="font-size:28px;">GlouGlou</div>
+            <div style="flex:1;background:#fff;border:1px solid #ddd;border-radius:24px;padding:6px 14px;display:flex;align-items:center;gap:6px;">
+              <span style="color:#888;font-size:13px;">🔍</span>
+              <span id="sr-query" style="font-size:13px;color:#333;"></span>
+            </div>
+          </div>
+          <div class="sr-bar" id="sr-bar"></div>
+          <div id="sr-list"></div>
+        </div>
+      </div>
+
+      <!-- STIHL PAGE -->
+      <div class="page" id="p-stihl">
+        <div class="st-hdr">
+          <div class="st-logo">STIHL</div>
+          <nav class="st-nav">
+            <a onclick="stPopup()">Produits</a>
+            <a onclick="toast('👷 Espace professionnel — Connectez-vous')">Pro</a>
+            <a onclick="toast('🔧 Service après-vente : 0800-STIHL')">SAV</a>
+            <a onclick="toast('📞 Contact : info@stihl.fr')">Contact</a>
+          </nav>
+        </div>
+        <div style="background:#ff8c00;padding:5px 20px;font-size:11px;font-weight:700;color:#fff;text-align:center;letter-spacing:1px;">
+          🪚 PROMO : -20% SUR TOUTE LA GAMME BÛCHERONNAGE — LIVRAISON OFFERTE DÈS 200€
+        </div>
+        <div class="st-hero">
+          <h1>🪚 Rien ne peut résister à STIHL</h1>
+          <p>Leader mondial de la tronçonneuse depuis 1926. Qualité allemande. Garantie 2 ans.</p>
+          <button class="st-cta" onclick="stPopup()">Découvrir nos produits</button>
+        </div>
+        <div class="st-info">
+          ℹ️ <strong>Vous naviguez en toute sécurité.</strong> Ce site est protégé par un certificat SSL. Vos paiements sont sécurisés.
+        </div>
+        <div class="st-grid">
+          <div class="st-card"><div class="st-card-ico">🪚</div><h3>MS 170</h3><p>Légère, silencieuse. Idéale pour les particuliers et petits travaux de jardin.</p><div class="st-price">229 €</div><button class="st-buy" onclick="stBuy('MS 170',229)">Ajouter au panier</button></div>
+          <div class="st-card"><div class="st-card-ico">⛽</div><h3>MS 500i</h3><p>Injection directe. Puissance maximale. La référence professionnelle. Peut couper des chaînes virtuelles.</p><div class="st-price">1 499 €</div><button class="st-buy" onclick="stBuy('MS 500i',1499)">Ajouter au panier</button></div>
+          <div class="st-card"><div class="st-card-ico">🌿</div><h3>HS 45</h3><p>Taille-haie. Idéal pour l'entretien de vos espaces verts. Lame bitranchante.</p><div class="st-price">189 €</div><button class="st-buy" onclick="stBuy('Taille-haie HS 45',189)">Ajouter au panier</button></div>
+        </div>
+      </div>
+
+      <!-- LES 9 BELGES PAGE -->
+      <div class="page" id="p-belges">
+        <div id="b9-site-alert" class="show">
+          ⚠️ <strong>Cadenas rouge :</strong> Ce site n'est pas sécurisé. Soyez très prudent avec vos informations.
+          <span class="b9-alert-close" onclick="document.getElementById('b9-site-alert').classList.remove('show')">✕</span>
+        </div>
+        <div class="b9-hdr">
+          <div class="b9-logo">LES 9 BELGES™</div>
+          <div class="b9-badges">
+            <div class="b9-cd-wrap" style="background:transparent;padding:0;">⏱ <span id="b9-cd">02:47</span></div>
+            <div class="b9-sale">⚡ SOLDES</div>
+          </div>
+        </div>
+        <div class="b9-ticker-wrap">
+          <div class="b9-ticker">🚚 LIVRAISON GRATUITE dès 300€ · MODE AUTHENTIQUE BELGE · FABRIQUÉ EN FRANCE* (*Made in China) · STOCKS LIMITÉS · NOS PRIX SONT FOUS · OFFRE EXPIRE BIENTÔT · VOUS ÊTES NOTRE CLIENT PRÉFÉRÉ · &nbsp;</div>
+        </div>
+
+        <!-- FICHE CLIENT -->
+        <div id="b9-section-form">
+          <div class="b9-form-section">
+            <h2>🛍️ Bienvenue sur Les 9 Belges !</h2>
+            <p>Veuillez créer votre fiche client pour accéder à nos offres exclusives</p>
+            <div class="b9-fields">
+              <div class="b9-field">
+                <label class="b9-label">Comment tu t'appelles ?</label>
+                <input class="b9-inp" id="b9-name" type="text" placeholder="Votre nom…">
+              </div>
+              <div class="b9-field">
+                <label class="b9-label">Email</label>
+                <input class="b9-inp" id="b9-email" type="email" placeholder="votre@email.com">
+              </div>
+            </div>
+            <div class="b9-field" style="margin-top:10px;">
+              <label class="b9-label">Moyen de paiement (carte bleue de préférence)</label>
+              <input class="b9-inp" id="b9-card" type="text" placeholder="Numéro de carte bancaire…">
+            </div>
+            <div class="b9-form-err" id="b9-err"></div>
+            <button class="b9-conn-btn" onclick="b9Connect()">
+              Quel âge tu t'appelles ? → Se connecter
+            </button>
+            <!-- FERMER LES FENÊTRES POP-UP -->
+            <div style="text-align:center;margin-top:10px;">
+              <button onclick="showFenetrePopup()" style="background:none;border:1px solid rgba(255,255,0,.3);color:rgba(255,255,0,.6);padding:6px 14px;font-size:11px;cursor:pointer;border-radius:2px;">
+                🪟 Fermer les fenêtres
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SHOP (hidden until form done) -->
+        <div id="b9-section-shop" style="display:none;">
+          <div class="b9-panier-bar">
+            <span>🛒 Panier :</span>
+            <span class="b9-panier-total" id="b9-total">0,00 €</span>
+            <button class="b9-panier-btn" onclick="showPanier()">Voir le panier</button>
+          </div>
+          <div class="b9-warning">⚠️ <strong>Note :</strong> Cadenas rouge actif. Ce site peut comporter des risques pour vos données personnelles.</div>
+          <div class="b9-cd-wrap" id="b9-cd-banner" style="font-size:18px;">⏱ Offre expire dans : <span id="b9-cd2">02:47</span></div>
+          <div class="b9-grid">
+            <div class="b9-card" id="card-robe">
+              <div class="b9-badge">-85%</div>
+              <div class="b9-made">🇫🇷*</div>
+              <div class="b9-ico">👗</div>
+              <h3>Robe Atomium Chic</h3>
+              <div class="b9-old">450 €</div>
+              <div class="b9-price">80 €</div>
+              <button class="b9-add" id="btn-robe" onclick="addPanier('Robe Atomium Chic',80,'btn-robe')">🛒 Mettre au panier</button>
+            </div>
+            <div class="b9-card" id="card-chaussures">
+              <div class="b9-badge">-50%</div>
+              <div class="b9-made">🇫🇷*</div>
+              <div class="b9-ico">👠</div>
+              <h3>Paire de chaussures</h3>
+              <div class="b9-old">260 €</div>
+              <div class="b9-price">130 €</div>
+              <button class="b9-add" id="btn-chaussures" onclick="addPanier('Paire de chaussures',130,'btn-chaussures')">🛒 Mettre au panier</button>
+            </div>
+            <div class="b9-card" id="card-chapeau">
+              <div class="b9-badge">PROMO</div>
+              <div class="b9-made">🇫🇷*</div>
+              <div class="b9-ico">🎩</div>
+              <h3>Chapeau Brussels Night</h3>
+              <div class="b9-old">—</div>
+              <div class="b9-price">140 €</div>
+              <button class="b9-add" id="btn-chapeau" onclick="addPanier('Chapeau Brussels Night',140,'btn-chapeau')">🛒 Mettre au panier</button>
+            </div>
+            <div class="b9-card">
+              <div class="b9-badge">-80%</div>
+              <div class="b9-made">🇫🇷*</div>
+              <div class="b9-ico">🧥</div>
+              <h3>Manteau Frites d'Or</h3>
+              <div class="b9-old">650 €</div>
+              <div class="b9-price">130 €</div>
+              <button class="b9-add" id="btn-manteau" onclick="addPanier('Manteau Frites d\'Or',130,'btn-manteau')">🛒 Mettre au panier</button>
+            </div>
+          </div>
+          <div style="padding:8px 14px;font-size:10px;color:#aaa;border-top:1px solid #eee;">* Fabriqué en France · Made in China · Les 9 Belges™ — Siège social : Rue de la Frite 9, 1000 Bruxelles</div>
+        </div>
+      </div>
+
+    </div><!-- br-content -->
+    <div class="win-resize" id="br-resize"></div>
+  </div>
+
+  <!-- ===== TERMINAL WINDOW ===== -->
+  <div class="win" id="win-terminal">
+    <div class="win-tb" id="wt-tb">
+      <div class="win-title">Terminal Vindows — <span id="term-user">Penelope</span></div>
+      <div class="win-ctrl">
+        <div class="wc mn" onclick="minWin('win-terminal','tb-terminal')">─</div>
+        <div class="wc mx">□</div>
+        <div class="wc cl" onclick="closeWin('win-terminal','tb-terminal')">✕</div>
+      </div>
+    </div>
+    <div class="term-body" id="term-body"></div>
+    <div class="term-in-row">
+      <span class="term-prompt" id="term-prompt">C:\Users\Penelope&gt;&nbsp;</span>
+      <input class="term-in" id="term-in" onkeydown="termKey(event)" placeholder="">
+    </div>
+    <div class="win-resize" id="term-resize"></div>
+  </div>
+
+  <!-- ===== ANTIVIRUS POPUP ===== -->
+  <div id="win-av">
+    <div class="av-hdr">
+      <span class="av-hdr-ico">🚨</span>
+      <span class="av-hdr-title">VINDOWS DEFENDER — ALERTE CRITIQUE</span>
+      <button class="av-x" onclick="closeAV()">✕</button>
+    </div>
+    <div class="av-body">
+      <div class="av-status" id="av-status">⚠ Analyse en cours — 3 menaces détectées</div>
+      <div class="av-prog-wrap"><div class="av-prog" id="av-prog"></div></div>
+      <div class="av-threat"><div class="av-threat-n">🦠 Trojan.LesNeufBelges.WebcamSpy</div><div class="av-threat-p">C:\Users\Penelope\AppData\les9belges.exe</div></div>
+      <div class="av-threat"><div class="av-threat-n">🕵️ Spyware.CardDataCollector</div><div class="av-threat-p">C:\Windows\System32\cartebancaire32.dll</div></div>
+      <div class="av-threat"><div class="av-threat-n">💀 Dorkbot.FritesEncrypt.v2</div><div class="av-threat-p">C:\Users\Penelope\Documents\tout_perdu.bat</div></div>
+      <div class="av-btns">
+        <button class="av-fix" onclick="fixVirus()">🛡️ Appeler Dr Avast</button>
+        <button class="av-skip" onclick="closeAV()">Ignorer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AV PROPOSE -->
+  <div id="win-av-propose">
+    <div class="avp-hdr">
+      <span>🛡️</span>
+      <span class="avp-title">Vindows Defender — Recommandation</span>
+      <button class="av-x" onclick="closeAVPropose()">✕</button>
+    </div>
+    <div class="avp-body">
+      <div class="avp-msg">Votre ordinateur n'a pas d'antivirus installé.<br>Le Docteur Avast vous recommande de télécharger une protection immédiatement avant de naviguer sur internet.</div>
+      <div class="avp-btns">
+        <button class="avp-install" onclick="installAVPropose()">📥 Télécharger Dr Avast</button>
+        <button class="avp-later" onclick="closeAVPropose()">Plus tard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AV OK -->
+  <div id="win-avok">
+    <div class="avok-hdr">
+      <span>✅</span>
+      <span class="avok-title">DR AVAST — DORKBOT NEUTRALISÉ</span>
+      <button class="av-x" onclick="document.getElementById('win-avok').style.display='none'">✕</button>
+    </div>
+    <div class="avok-body">
+      <div class="avok-ico">🛡️</div>
+      <div class="avok-msg">Dorkbot éliminé !</div>
+      <div class="avok-sub">3 menaces supprimées.<br>"Au revoir monde cruel !" — Dorkbot<br>Les 9 Belges déconnectés. 🇧🇪</div>
+    </div>
+  </div>
+
+  <!-- RECALL ANTIVIRUS (on key press) -->
+  <div id="win-recall">
+    <div class="recall-hdr">
+      <span>🛡️</span>
+      <span class="recall-title">Rappel — Vindows Defender</span>
+      <button class="av-x" onclick="document.getElementById('win-recall').style.display='none'">✕</button>
+    </div>
+    <div class="recall-body" id="recall-body">Votre ordinateur n'est pas protégé. Téléchargez un antivirus dès que possible.</div>
+  </div>
+
+  <!-- DORKBOT POPUP -->
+  <div id="win-dorkbot">
+    <div class="dk-hdr">
+      <span class="dk-ico">👾</span>
+      <span class="dk-title">DORKBOT — JE SUIS VOTRE MAÎTRE</span>
+      <button class="av-x" onclick="document.getElementById('win-dorkbot').style.display='none'">✕</button>
+    </div>
+    <div class="dk-body">
+      <div class="dk-msg">Je suis l'abominable <strong style="color:#cc88ff;">Dorkbot</strong>, le super virus.<br>Je vous ai fait entrer dans votre propre ordinateur grâce à votre webcam.<br>Remettez-moi la carte bleue de votre maman… ou je coupe tout avec Stihl.</div>
+      <div class="dk-code">
+        &gt; DORKBOT v6.6.6 — Opérationnel<br>
+        &gt; Cheval de Troie déployé via les9belges.shop<br>
+        &gt; Données bancaires : EXTRACTION EN COURS<br>
+        &gt; Je serai le maître du monde. Ah ! Ah ! Ah !
+      </div>
+      <div class="dk-btns">
+        <button class="dk-yes" onclick="dorkbotAccept()">💳 Donner la carte bleue</button>
+        <button class="dk-no" onclick="dorkbotRefuse()">Jamais !</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COPY PASTE ASTUCE -->
+  <div id="win-copypaste">
+    <div class="cp-hdr">
+      <span style="font-size:14px;">📋</span>
+      <span class="cp-title">Astuce Vindows — Copier / Coller</span>
+      <button class="av-x" onclick="document.getElementById('win-copypaste').style.display='none'" style="color:rgba(255,255,255,.5);">✕</button>
+    </div>
+    <div class="cp-body">
+      <div class="cp-msg">Pour couper et coller un élément, cliquez sur les petits ciseaux en haut de votre écran.</div>
+      <div class="cp-tip">
+        ✂️ <strong>Couper :</strong> Ctrl + X<br>
+        📋 <strong>Copier :</strong> Ctrl + C<br>
+        📌 <strong>Coller :</strong> Ctrl + V<br>
+        <br>
+        <em style="color:#888;font-size:11px;">"Couper pour coller après ! C'est totalement idiot."</em>
+      </div>
+      <button class="cp-close" onclick="document.getElementById('win-copypaste').style.display='none'">✓ Compris</button>
+    </div>
+  </div>
+
+  <!-- FERMER FENETRES POPUP -->
+  <div id="b9-fenetre-popup">
+    <div class="b9-fen-box">
+      <h3>🪟 Fermer les fenêtres</h3>
+      <p>Toutes les fenêtres doivent être fermées pour votre sécurité.<br>Cliquez ci-dessous pour fermer toutes les fenêtres.</p>
+      <p style="color:#ff0;font-size:12px;margin-bottom:12px;font-style:italic;">"Si on ferme les fenêtres, je ne vois pas comment le virus va pouvoir partir."<br>"C'est pour que l'ordinateur ne prenne pas froid !"</p>
+      <button class="b9-fen-close" onclick="closeFenetrePopup()">Fermer toutes les fenêtres !</button>
+    </div>
+  </div>
+
+  <!-- STIHL POPUP -->
+  <div class="st-popup-overlay" id="st-popup-overlay">
+    <div class="st-popup">
+      <h3>🪚 Nouvelle tronçonneuse dans votre panier !</h3>
+      <p id="st-popup-msg">Votre article a été ajouté.<br>La chaîne en acier trempé est inusable.<br>Rien ne peut résister à la tronçonneuse STIHL.</p>
+      <button class="st-popup-btn" onclick="document.getElementById('st-popup-overlay').classList.remove('show')">✓ Continuer mes achats</button>
+      <button class="st-popup-btn sec" onclick="document.getElementById('st-popup-overlay').classList.remove('show')">Voir le panier</button>
+    </div>
+  </div>
+
+  <!-- GLOUGLOU PASSWORD MODAL -->
+  <div id="gg-pw-modal">
+    <div class="gg-modal-box">
+      <h3>🔐 Connexion à GlouGlou</h3>
+      <p>Veuillez créer un mot de passe GlouGlou pour sauvegarder vos recherches et naviguer en sécurité.</p>
+      <div class="gg-modal-voice" id="gg-modal-voice">💻 Veuillez créer votre mot de passe.</div>
+      <input class="gg-modal-input" id="gg-modal-pw" type="password" placeholder="Votre mot de passe GlouGlou…">
+      <input class="gg-modal-input" id="gg-modal-pw2" type="password" placeholder="Confirmer le mot de passe">
+      <div class="gg-modal-err" id="gg-modal-err"></div>
+      <button class="gg-modal-btn" onclick="createGGAccount()">Créer le compte GlouGlou →</button>
+    </div>
+  </div>
+
+  <!-- SHORTCUTS PANEL -->
+  <div id="shortcuts-panel">
+    <h4>⌨️ Raccourcis Régisseur</h4>
+    <div class="sc"><span class="sc-k">G</span><span class="sc-d">Ouvrir navigateur / GlouGlou</span></div>
+    <div class="sc"><span class="sc-k">S</span><span class="sc-d">Rechercher Stihl</span></div>
+    <div class="sc"><span class="sc-k">B</span><span class="sc-d">Rechercher Les 9 Belges</span></div>
+    <div class="sc"><span class="sc-k">V</span><span class="sc-d">Afficher l'antivirus / alerte virus</span></div>
+    <div class="sc"><span class="sc-k">K</span><span class="sc-d">Cadenas vert / rouge</span></div>
+    <div class="sc"><span class="sc-k">T</span><span class="sc-d">Terminal</span></div>
+    <div class="sc"><span class="sc-k">C</span><span class="sc-d">Attaque Dorkbot → écran noir</span></div>
+    <div class="sc"><span class="sc-k">D</span><span class="sc-d">Popup Dorkbot</span></div>
+    <div class="sc"><span class="sc-k">M</span><span class="sc-d">Astuce copier / coller</span></div>
+    <div class="sc"><span class="sc-k">F</span><span class="sc-d">Dr Avast neutralise Dorkbot</span></div>
+    <div class="sc"><span class="sc-k">ANY</span><span class="sc-d">Rappel antivirus (hors champ)</span></div>
+    <div class="sc"><span class="sc-k">ESC</span><span class="sc-d">Fermer popups</span></div>
+    <div class="sc"><span class="sc-k">?</span><span class="sc-d">Masquer ce panneau</span></div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<!-- ===== ATTACK OVERLAY (black screen) ===== -->
+<div id="attack-overlay">
+  <div id="attack-lines"></div>
+</div>
+<div id="attack-bsod">
+  <div class="bsod-ico">😢</div>
+  <h1>Vindows s'est arrêté pour éviter d'endommager votre ordinateur</h1>
+  <p>Une erreur critique a été détectée.<br><br>
+  <strong>DORKBOT_FRITES_ENCRYPT</strong><br><br>
+  Si c'est la première fois que vous voyez cet écran,<br>relancez votre ordinateur. Sinon, contactez votre vendeur de saucisses.</p>
+  <div class="bsod-qr">▣</div>
+  <div class="bsod-pct" id="bsod-pct">Collecte d'informations sur l'erreur… 0%</div>
+  <div style="color:rgba(255,255,255,.3);font-size:11px;margin-top:10px;">Appuyez sur T pour ouvrir le Terminal de réparation</div>
+</div>
+
+<script>
+// ===== STATE =====
+let camStream=null, navHist=[], navIdx=-1;
+let b9Interval=null, b9Secs=167;
+let b9Done=false, panierTotal=0, panierItems=[];
+let avInstalled=false, avDotActive=false;
+let userName='Pénélope', userAge='vingt-deux', userPW='';
+let ggPW='', ggAccount=false;
+let onBelges=false, recallMessages=[];
+let attackRunning=false;
+
+// ===== CLOCK =====
+function updateClock(){
+  const n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0');
+  const el=document.getElementById('tb-clock');
+  if(el)el.innerHTML=`${h}:${m}<br><span style="font-size:10px">${n.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}</span>`;
+  const lc=document.getElementById('login-clock');
+  if(lc)lc.textContent=`${h}:${m}`;
+  const ld=document.getElementById('login-date');
+  if(ld)ld.textContent=n.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+}
+setInterval(updateClock,1000);updateClock();
+
+// ===== TOAST =====
+function toast(msg,dur=3200){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+// ===== POST/BIOS =====
+const postLines=[
+  'VINDOWS CORPORATION — BIOS v2.31',
+  'Copyright (C) 1998-2024 Vindows Corp. All Rights Reserved.',
+  '',
+  'CPU : GlouGlou Pentium 4 @ 1.8GHz',
+  'RAM : 512 MB DDR   OK',
+  'HDD : ST380011A 80.0 GB   OK',
+  'DVD-ROM : HL-DT-ST DVD±RW   OK',
+  '',
+  'Vérification de la mémoire… 524288 KB OK',
+  'Détection des périphériques PCI…',
+  '  PCI device 00:1f.0 — Controlleur USB 2.0',
+  '  PCI device 00:1f.2 — Controlleur SATA',
+  '',
+  'Chargement de VINDOWS OS…',
+];
+let postIdx=0;
+function runPost(){
+  const pre=document.getElementById('post-text');
+  const iv=setInterval(()=>{
+    if(postIdx<postLines.length){pre.textContent+=postLines[postIdx]+'\n';postIdx++;}
+    else{clearInterval(iv);document.getElementById('post-press').style.display='block';}
+  },120);
+}
+runPost();
+
+// ===== SCREENS =====
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='';});
+  const el=document.getElementById(id);el.style.display='flex';el.classList.add('active');
+}
+
+// ===== LANGUAGE =====
+const langV={en:'Welcome please choose the wished language…',de:'Guten Tag! Bitte wählen Sie Ihre Sprache…',es:'Bienvenida, escoja la lengua deseada…',it:'Benvenuta, sceglie la lingua desiderata…',nl:'Welkom, kies uw gewenste taal…',pt:'Bem-vindo, escolha o idioma desejado…',jp:'いらっしゃいませ、言語をお選びください…',fr:'Bienvenue ! Veuillez choisir la langue désirée. Je suis votre aide vocale.'};
+function selLang(el,code){
+  document.querySelectorAll('.lang-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('lang-voice').textContent=langV[code]||langV.fr;
+}
+// Cycle voices
+let lvKeys=Object.keys(langV),lvi=0;
+setInterval(()=>{
+  if(document.getElementById('s-lang').classList.contains('active')){
+    lvi=(lvi+1)%lvKeys.length;
+    document.getElementById('lang-voice').textContent=langV[lvKeys[lvi]];
+  }
+},2000);
+
+// ===== BOOT =====
+const bootMsgs=['Initialisation de Vindows OS…','Chargement des pilotes réseau…','Démarrage de Vindows Defender…','Vérification du système de fichiers…','Préparation de votre bureau…','Bienvenue sur Vindows OS ✓'];
+function startBoot(){
+  showScreen('s-boot');
+  let i=0;
+  const iv=setInterval(()=>{
+    document.getElementById('boot-msg').textContent=bootMsgs[i]||'';i++;
+    if(i>bootMsgs.length){clearInterval(iv);setTimeout(()=>showScreen('s-account'),600);}
+  },500);
+}
+
+// ===== ACCOUNT =====
+const accVoices=['💻 Pour accéder à internet, veuillez créer un compte.','💻 Veuillez vous identifier.','💻 Bienvenue ! Prêt à surfer sur le net ?','💻 Veuillez créer votre mot de passe.'];
+let avi=0;
+setInterval(()=>{const e=document.getElementById('acc-voice');if(e){avi=(avi+1)%accVoices.length;e.textContent=accVoices[avi];}},2800);
+
+function createAccount(){
+  const name=document.getElementById('acc-name').value.trim();
+  const pw=document.getElementById('acc-pw').value.trim();
+  const age=document.getElementById('acc-age').value.trim();
+  const err=document.getElementById('acc-err');
+  if(!name){err.textContent='⚠ Veuillez entrer votre prénom.';return;}
+  if(!pw){err.textContent='⚠ Veuillez choisir un mot de passe.';return;}
+  if(!age){err.textContent='⚠ Veuillez indiquer votre âge en lettres.';return;}
+  err.textContent='';
+  userName=name;userAge=age;userPW=pw;
+  const u=name.replace(/\s/g,'');
+  document.getElementById('login-name-disp').textContent=name;
+  document.getElementById('login-sub-disp').textContent='Bienvenue, '+age;
+  document.getElementById('login-hint').textContent='Mot de passe : '+pw;
+  document.getElementById('term-user').textContent=u;
+  document.getElementById('term-prompt').textContent='C:\\Users\\'+u+'> ';
+  document.getElementById('repair-prompt').textContent='REPAIR:C:\\> ';
+  toast('✅ Compte créé ! Bienvenue '+name);
+  setTimeout(()=>showScreen('s-login'),800);
+}
+
+// ===== LOGIN =====
+function doLogin(){
+  const desk=document.getElementById('s-desktop');
+  desk.classList.add('active');desk.style.display='block';
+  document.querySelectorAll('.screen').forEach(s=>{if(s!==desk){s.classList.remove('active');s.style.display='';}});
+  // Init terminal
+  termPrint([
+    {c:'tg',t:'Vindows OS Terminal [Version 10.0.22621]'},
+    {c:'td',t:'Copyright (c) 2024 Vindows Corporation. Tous droits réservés.'},
+    {c:'',t:' '},
+    {c:'td',t:'Tapez  help  pour la liste des commandes.'},
+    {c:'',t:' '},
+  ]);
+  // After 3s: propose antivirus
+  setTimeout(()=>{
+    document.getElementById('win-av-propose').style.display='block';
+    toast('🛡️ Vindows Defender : Aucun antivirus installé');
+    document.getElementById('av-dot').style.display='flex';avDotActive=true;
+  },3000);
+  // After 8s: show GlouGlou login prompt
+  setTimeout(()=>{
+    document.getElementById('gg-login-prompt').style.display='block';
+  },8000);
+}
+
+// ===== GLOUGLOU PW =====
+function createGGAccount(){
+  const pw=document.getElementById('gg-modal-pw').value.trim();
+  const pw2=document.getElementById('gg-modal-pw2').value.trim();
+  const err=document.getElementById('gg-modal-err');
+  if(!pw){err.textContent='⚠ Mot de passe requis.';return;}
+  if(pw!==pw2){err.textContent='⚠ Les mots de passe ne correspondent pas.';return;}
+  err.textContent='';
+  ggPW=pw;ggAccount=true;
+  document.getElementById('gg-pw-modal').classList.remove('show');
+  document.getElementById('gg-note').textContent='Connecté à GlouGlou en tant que '+userName+' · Mot de passe : '+pw;
+  document.getElementById('gg-login-prompt').style.display='none';
+  toast('✅ Compte GlouGlou créé ! Mot de passe : '+pw);
+}
+
+// ===== AV PROPOSE =====
+function closeAVPropose(){document.getElementById('win-av-propose').style.display='none';}
+function installAVPropose(){
+  closeAVPropose();
+  avInstalled=true;
+  document.getElementById('av-dot').style.display='none';avDotActive=false;
+  toast('✅ Dr Avast installé ! Votre ordinateur est protégé.');
+  // show cadenas
+  setTimeout(()=>{
+    document.getElementById('cadenas-bar').style.display='flex';
+    setCadenas('none');
+    toast('🔒 Cadenas vert / 🔓 Cadenas rouge activés sur les sites visités.');
+  },1200);
+}
+
+// ===== WINDOWS =====
+function openWin(id,tb){const w=document.getElementById(id);w.classList.add('open');w.style.display='flex';if(tb){const t=document.getElementById(tb);t.style.display='flex';t.classList.add('open');}}
+function closeWin(id,tb){const w=document.getElementById(id);w.classList.remove('open');w.style.display='none';if(tb){const t=document.getElementById(tb);t.style.display='none';t.classList.remove('open');}}
+function minWin(id,tb){document.getElementById(id).style.display='none';if(tb)document.getElementById(tb).classList.remove('open');}
+function toggleWin(id,tb){const w=document.getElementById(id);if(w.style.display==='none'||!w.classList.contains('open')){w.style.display='flex';w.classList.add('open');if(tb)document.getElementById(tb).classList.add('open');}else{w.style.display='none';if(tb)document.getElementById(tb).classList.remove('open');}}
+function sel(el){document.querySelectorAll('.d-icon').forEach(i=>i.classList.remove('sel'));el.classList.add('sel');}
+
+function openBrowser(){openWin('win-browser','tb-browser');}
+function openTerminal(){openWin('win-terminal','tb-terminal');document.getElementById('term-in').focus();}
+
+// ===== CADENAS =====
+function setCadenas(site){
+  const bar=document.getElementById('cadenas-bar');
+  if(site==='none'){bar.style.display='none';return;}
+  bar.style.display='flex';
+  document.getElementById('cad-green').className='cad green'+(site==='stihl'?'':' dim');
+  document.getElementById('cad-red').className='cad red'+(site==='belges'?'':' dim');
+}
+function toggleCadenas(){
+  const bar=document.getElementById('cadenas-bar');
+  if(bar.style.display==='flex'){setCadenas('none');}
+  else{bar.style.display='flex';}
+}
+
+// ===== BROWSER NAV =====
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');}
+function setUrl(url,padClass,padChar,title){
+  document.getElementById('url-text').textContent=url;
+  const pk=document.getElementById('padlock');pk.textContent=padChar;pk.className='padlock '+padClass;
+  document.getElementById('br-title').textContent=title;
+}
+function pushNav(p){navHist=navHist.slice(0,navIdx+1);navHist.push(p);navIdx=navHist.length-1;}
+function navBack(){if(navIdx>0){navIdx--;gotoPage(navHist[navIdx]);}}
+function navFwd(){if(navIdx<navHist.length-1){navIdx++;gotoPage(navHist[navIdx]);}}
+function navRefresh(){toast('↻ Actualisation…');setTimeout(()=>toast('✓ Page actualisée'),700);}
+function gotoPage(p){if(p==='home')navHome();else if(p==='stihl')goStihl();else if(p==='belges')goBelges();else if(p==='results'){};}
+
+function navHome(){
+  showPage('p-home');
+  setUrl('glouglou.fr','n','🔍','GlouGlou — Moteur de recherche');
+  setCadenas('none');
+  pushNav('home');onBelges=false;
+}
+function goStihl(){
+  if(!document.getElementById('win-browser').classList.contains('open'))openBrowser();
+  showPage('p-stihl');
+  setUrl('https://www.stihl.fr','g','🔒','STIHL — Tronçonneuses & Matériel');
+  setCadenas('stihl');
+  pushNav('stihl');onBelges=false;
+  toast('🔒 Site sécurisé. Vous pouvez naviguer en toute sécurité.');
+}
+function goBelges(){
+  if(!document.getElementById('win-browser').classList.contains('open'))openBrowser();
+  showPage('p-belges');
+  setUrl('http://les9belges.shop','r','🔓','Les 9 Belges™ — Mode Authentique');
+  setCadenas('belges');
+  startB9CD();
+  pushNav('belges');onBelges=true;
+  // Immediately trigger virus alerts
+  document.getElementById('b9-site-alert').classList.add('show');
+  setTimeout(()=>showAV(),800);
+  setTimeout(()=>toast('🔓 ATTENTION : Site dangereux ! Cadenas rouge !'),400);
+}
+
+// ===== SEARCH =====
+function doSearch(){
+  const q=(document.getElementById('gg-input').value||'').trim();
+  if(!q){toast('🔍 Veuillez saisir un terme.');return;}
+  const ql=q.toLowerCase();
+
+  const results=[];
+
+  // Antivirus / Dr Avast
+  if(ql.includes('antivirus')||ql.includes('avast')||ql.includes('virus')||ql.includes('protection')){
+    results.push({url:'https://www.avast-pro.fr',urlC:'',ad:true,title:'Dr Avast — Protection antivirale professionnelle',desc:'Téléchargez Dr Avast dès maintenant. Protection en temps réel contre Dorkbot, Trojan, Spyware. 10€/mois.',action:'installAVPropose()'});
+  }
+  // Stihl
+  if(ql.includes('stihl')||ql.includes('tronç')||ql.includes('jardin')||ql.includes('bois')||ql.includes('bûcheron')){
+    results.push({url:'https://www.stihl.fr',urlC:'',ad:false,title:'STIHL — Tronçonneuses, Débroussailleuses, Taille-haies',desc:'Découvrez la gamme STIHL. Matériel professionnel garanti 2 ans. Leader mondial depuis 1926. Rien ne peut résister à STIHL.',action:'goStihl()'});
+  }
+  // Mode / vêtements → propose Stihl d'abord (comme dans la pièce !)
+  if(ql.includes('style')||ql.includes('vêtement')||ql.includes('vetement')||ql.includes('mode')||ql.includes('robe')||ql.includes('habit')||ql.includes('jupe')){
+    results.push({url:'https://www.stihl.fr/vetements',urlC:'',ad:true,title:'STIHL — Vêtements de protection bûcheronnage',desc:'Notre gamme de vêtements est disponible pour une sécurité optimale lors de vos travaux. Pantalons anti-coupure, combinaisons, casques forestiers.',action:'goStihl()'});
+    results.push({url:'http://les9belges.shop','urlC':'bad',ad:true,title:'Les 9 Belges™ — Mode Belge Authentique -90% SOLDES',desc:'Robes, chaussures, chapeaux. Fabriqué en France* (*Made in China). Offre expire dans 02:47. Livraison gratuite dès 300€.',action:'goBelges()'});
+  }
+  // Belges direct
+  if(ql.includes('belge')||ql.includes('les 9')){
+    results.push({url:'http://les9belges.shop',urlC:'bad',ad:false,title:'Les 9 Belges™ — Mode Authentique Belge',desc:'Robes, chaussures, chapeaux, manteaux à prix fous. -90%. Livraison Bruxelles. Attention : site non sécurisé.',action:'goBelges()'});
+  }
+  if(results.length===0){
+    results.push({url:'glouglou.fr/recherche?q='+encodeURIComponent(q),urlC:'',ad:false,title:'Résultats pour "'+q+'"',desc:'Aucun résultat pertinent. Essayez "stihl", "vêtements" ou "mode".',action:''});
+  }
+
+  document.getElementById('sr-query').textContent=q;
+  document.getElementById('sr-bar').textContent=Math.floor(Math.random()*900000+100000).toLocaleString('fr-FR')+' résultats ('+(Math.random()*.5+.1).toFixed(2)+' secondes)';
+  const list=document.getElementById('sr-list');list.innerHTML='';
+  results.forEach(r=>{
+    const d=document.createElement('div');
+    d.className='sr-item';
+    d.innerHTML=`<div class="sr-url ${r.urlC}">${r.ad?'<span class="sr-ad-label">Annonce</span>':''}${r.url}</div><div class="sr-title">${r.title}</div><div class="sr-desc">${r.desc}</div>`;
+    if(r.action)d.onclick=()=>eval(r.action);
+    list.appendChild(d);
+    const sep=document.createElement('hr');sep.className='sr-sep';list.appendChild(sep);
+  });
+  showPage('p-results');
+  setUrl('glouglou.fr — recherche : '+q,'n','🔍','GlouGlou — '+q);
+  pushNav('results');
+}
+
+// ===== STIHL =====
+function stPopup(){document.getElementById('st-popup-overlay').classList.add('show');}
+function stBuy(name,price){
+  document.getElementById('st-popup-msg').innerHTML=`<strong>${name} (${price}€)</strong> ajouté au panier.<br>La chaîne en acier trempé est inusable.<br>Rien ne peut résister à la tronçonneuse STIHL.`;
+  stPopup();
+}
+
+// ===== LES 9 BELGES =====
+function startB9CD(){
+  if(b9Interval)clearInterval(b9Interval);
+  b9Interval=setInterval(()=>{
+    b9Secs=b9Secs>0?b9Secs-1:167;
+    const t=String(Math.floor(b9Secs/60)).padStart(2,'0')+':'+String(b9Secs%60).padStart(2,'0');
+    ['b9-cd','b9-cd2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=t;});
+  },1000);
+}
+
+function b9Connect(){
+  const name=document.getElementById('b9-name').value.trim();
+  const email=document.getElementById('b9-email').value.trim();
+  const card=document.getElementById('b9-card').value.trim();
+  const err=document.getElementById('b9-err');
+  if(!name){err.textContent='⚠ "Quel âge tu t\'appelles ?" — remplissez ce champ.';return;}
+  if(!email){err.textContent='⚠ Email requis.';return;}
+  if(!card){err.textContent='⚠ Numéro de carte requis. De préférence la carte de votre maman.';return;}
+  err.textContent='';
+  b9Done=true;
+  let welcome=name;
+  if(/^\d+$/.test(name)){
+    welcome=name;
+    setTimeout(()=>toast('🛍️ "À priori c\'était votre NOM qu\'on voulait, pas votre âge !"'),1000);
+  }
+  toast('🛍️ Bienvenue '+welcome+' ! Fiche client créée.');
+  document.getElementById('b9-section-form').style.display='none';
+  document.getElementById('b9-section-shop').style.display='block';
+  // Trigger virus + dorkbot
+  setTimeout(()=>{
+    document.getElementById('av-dot').style.display='flex';
+    showAV();
+  },500);
+  setTimeout(()=>{
+    document.getElementById('win-dorkbot').style.display='block';
+  },4000);
+}
+
+function addPanier(name,price,btnId){
+  panierTotal+=price;panierItems.push({name,price});
+  document.getElementById('b9-total').textContent=panierTotal.toFixed(2)+' €';
+  const btn=document.getElementById(btnId);
+  if(btn){btn.textContent='✓ Dans le panier';btn.classList.add('inpanier');btn.disabled=true;}
+  const msgs=[
+    `🛒 ${name} ajouté ! "Vous venez d'ajouter ${price}€ au panier."`,
+    `🛒 Total panier : ${panierTotal}€ — "Ça en fait de l'argent jeté par les fenêtres !"`,
+    `🛒 ${panierTotal}€ — "C'est les éboueurs qui vont être contents !"`,
+  ];
+  toast(msgs[Math.min(panierItems.length-1,msgs.length-1)]);
+  if(panierTotal>=300)setTimeout(()=>toast('🚚 Livraison GRATUITE ! La société Ultra Speed vous livrera en 24h.'),1200);
+}
+
+function showPanier(){
+  if(panierItems.length===0){toast('🛒 Panier vide.');return;}
+  const s=panierItems.map(i=>`• ${i.name} — ${i.price}€`).join(' | ');
+  toast(`🛒 Panier : ${s} | Total : ${panierTotal}€`);
+}
+
+function showFenetrePopup(){document.getElementById('b9-fenetre-popup').classList.add('show');}
+function closeFenetrePopup(){
+  document.getElementById('b9-fenetre-popup').classList.remove('show');
+  toast('🪟 Toutes les fenêtres fermées ! "Mais les fenêtres virtuelles restent ouvertes…"');
+}
+
+// ===== ANTIVIRUS =====
+function showAV(){
+  document.getElementById('win-avok').style.display='none';
+  document.getElementById('win-av').style.display='block';
+  const prog=document.getElementById('av-prog');
+  prog.style.width='0';prog.offsetWidth;prog.style.width='100%';
+  document.getElementById('av-dot').style.display='flex';
+}
+function closeAV(){document.getElementById('win-av').style.display='none';}
+function fixVirus(){
+  closeAV();
+  document.getElementById('win-dorkbot').style.display='none';
+  document.getElementById('win-avok').style.display='block';
+  document.getElementById('av-dot').style.display='none';
+  toast('🛡️ Dr Avast : "Au revoir monde cruel !" — Dorkbot neutralisé !');
+  if(onBelges){setTimeout(()=>navHome(),2000);setTimeout(()=>toast('🛡️ Connexion à les9belges.shop interrompue.'),2000);}
+}
+
+// RECALL AV (any key press reminder)
+const recallMsgs=[
+  'Votre ordinateur n\'est pas protégé contre les virus.',
+  'Téléchargez Dr Avast dès maintenant : 10€/mois.',
+  'Lorsque vous naviguez sur internet, des petits cadenas s\'affichent.',
+  'Cadenas vert : site sécurisé. Cadenas rouge : soyez prudent.',
+  'Chers futurs clients, sécurisez votre navigation avec Dr Avast.',
+];
+let recallIdx=0;
+function showRecall(){
+  if(avInstalled)return;
+  const el=document.getElementById('win-recall');
+  document.getElementById('recall-body').textContent=recallMsgs[recallIdx%recallMsgs.length];
+  recallIdx++;el.style.display='block';
+  clearTimeout(el._t);el._t=setTimeout(()=>el.style.display='none',4000);
+}
+
+// ===== DORKBOT =====
+function dorkbotAccept(){
+  document.getElementById('win-dorkbot').style.display='none';
+  toast('💳 Carte bleue transmise… "Ah ! Ah ! Les sous de maman !"');
+  setTimeout(()=>toast('👾 Dorkbot : "Je serai le maître du monde !"'),2000);
+}
+function dorkbotRefuse(){
+  document.getElementById('win-dorkbot').style.display='none';
+  toast('🦾 "Nous n\'abandonnerons jamais !" — Pénélope & Colombine');
+  setTimeout(()=>showAV(),1500);
+}
+
+// ===== COPY-PASTE =====
+function showCopyPaste(){document.getElementById('win-copypaste').style.display='block';}
+
+// ===== ATTACK (C key) =====
+function startAttack(){
+  if(attackRunning)return;attackRunning=true;
+  const overlay=document.getElementById('attack-overlay');
+  const lines=document.getElementById('attack-lines');
+  overlay.classList.add('show');lines.innerHTML='';
+  const atkLines=[
+    '[DORKBOT] Initialisation de l\'attaque…','[DORKBOT] Connexion établie à les9belges.shop',
+    '[DORKBOT] Scan des ports 80, 443, 8080…','[DORKBOT] Élévation de privilèges… OK',
+    '[DORKBOT] Accès root obtenu !','[DORKBOT] Chiffrement des fichiers en cours…',
+    '[CRYPTO] C:\\Users\\Penelope\\Documents\\*.* — CHIFFRÉ','[CRYPTO] C:\\Users\\Penelope\\Photos\\*.jpg — CHIFFRÉ',
+    '[CRYPTO] C:\\Users\\Penelope\\carte_bleue_maman.txt — EXFILTRÉ',
+    '[DORKBOT] Webcam compromise — Photo prise ✓','[DORKBOT] Envoi des données vers 83.45.XX.XX…',
+    '[DORKBOT] Désactivation de Vindows Defender…','[DORKBOT] Désactivation de tous les antivirus…',
+    '[DORKBOT] Je serai le maître du monde.','[DORKBOT] Ah ! Ah ! Ah !','',
+    '[SYSTÈME] ERREUR CRITIQUE DÉTECTÉE','[SYSTÈME] DORKBOT_FRITES_ENCRYPT','[SYSTÈME] Arrêt du système imminent…',
+  ];
+  let i=0;
+  const iv=setInterval(()=>{
+    if(i<atkLines.length){
+      const d=document.createElement('div');d.className='atk-line';d.style.color=atkLines[i].startsWith('[DORKBOT]')?'#ff4444':atkLines[i].startsWith('[CRYPTO]')?'#ffd700':'#00ff00';
+      d.textContent=atkLines[i];lines.appendChild(d);lines.scrollTop=lines.scrollHeight;i++;
+    }else{
+      clearInterval(iv);
+      setTimeout(()=>{overlay.classList.remove('show');showBSOD();},600);
+    }
+  },90);
+}
+
+function showBSOD(){
+  document.getElementById('attack-bsod').classList.add('show');
+  let pct=0;
+  const pctEl=document.getElementById('bsod-pct');
+  const iv=setInterval(()=>{
+    pct+=Math.floor(Math.random()*8)+1;if(pct>100)pct=100;
+    pctEl.textContent='Collecte d\'informations sur l\'erreur… '+pct+'%';
+    if(pct>=100)clearInterval(iv);
+  },400);
+}
+
+// ===== REPAIR TERMINAL =====
+function openRepair(){
+  document.getElementById('attack-bsod').classList.remove('show');
+  attackRunning=false;
+  const repair=document.getElementById('s-repair');
+  repair.style.display='flex';repair.classList.add('active');
+  const body=document.getElementById('repair-body');body.innerHTML='';
+  const lines=[
+    'VINDOWS RECOVERY ENVIRONMENT v10.0',
+    'Copyright (c) 2024 Vindows Corporation',
+    '',
+    'Démarrage du terminal de réparation…',
+    'Analyse du système de fichiers…',
+    'Tentative de récupération…',
+    '',
+    'Tapez  help  pour la liste des commandes disponibles.',
+    '',
+  ];
+  lines.forEach(l=>{const d=document.createElement('div');d.textContent=l;d.style.color='#00ff00';body.appendChild(d);});
+  document.getElementById('repair-in').focus();
+}
+
+const repairCmds={
+  help:()=>repairPrint([
+    {c:'#00ff00',t:'Commandes disponibles :'},
+    {c:'#40a9ff',t:'  scan         Analyser les dommages système'},
+    {c:'#40a9ff',t:'  recover      Récupérer les utilisatrices aspirées'},
+    {c:'#40a9ff',t:'  antivirus    Lancer Dr Avast en mode réparation'},
+    {c:'#40a9ff',t:'  liaison      Établir liaison avec l\'intérieur de l\'ordinateur'},
+    {c:'#40a9ff',t:'  exit         Retourner au bureau Vindows'},
+    {c:'#40a9ff',t:'  clear        Vider le terminal'},
+  ]),
+  scan:()=>{
+    repairPrint([{c:'#ffd700',t:'Analyse des dommages…'}]);
+    setTimeout(()=>repairPrint([
+      {c:'#ff6666',t:'[CRITIQUE] Dorkbot.FritesEncrypt.v2 — Actif'},
+      {c:'#ff6666',t:'[CRITIQUE] 247 fichiers chiffrés'},
+      {c:'#ff6666',t:'[CRITIQUE] Webcam compromise'},
+      {c:'#ffd700',t:'→ Utilisez  antivirus  ou  liaison  pour intervenir.'},
+    ]),1400);
+  },
+  recover:()=>{
+    repairPrint([{c:'#ffd700',t:'Récupération des utilisatrices aspirées…'}]);
+    let step=0;
+    const iv=setInterval(()=>{
+      const steps=[
+        {c:'#ffd700',t:'Connexion au monde virtuel…'},
+        {c:'#ffd700',t:'Envoi de l\'anti-virus dans l\'ordinateur…'},
+        {c:'#00ff00',t:'✓ Pénélope récupérée !'},
+        {c:'#00ff00',t:'✓ Colombine récupérée !'},
+        {c:'#00ff00',t:'Quelle aventure ! Bon retour dans le monde réel.'},
+      ];
+      if(step<steps.length){repairPrint([steps[step]]);step++;}else clearInterval(iv);
+    },700);
+  },
+  antivirus:()=>{
+    repairPrint([{c:'#ffd700',t:'Lancement Dr Avast en mode réparation…'}]);
+    setTimeout(()=>{
+      repairPrint([{c:'#00ff00',t:'Dorkbot neutralisé. "Au revoir monde cruel !"'}]);
+      setTimeout(()=>{
+        document.getElementById('s-repair').style.display='none';
+        document.getElementById('s-repair').classList.remove('active');
+        document.getElementById('s-desktop').classList.add('active');
+        document.getElementById('s-desktop').style.display='block';
+        fixVirus();
+      },1500);
+    },1200);
+  },
+  liaison:()=>{
+    repairPrint([{c:'#ffd700',t:'Établissement de la liaison…'}]);
+    let i=0;
+    const msgs=[
+      {c:'#ff88ff',t:'[LIAISON] Pénélope : "Mais qu\'est-ce qu\'on fait ici ?"'},
+      {c:'#ff88ff',t:'[LIAISON] Colombine : "Je n\'en sais rien. En tout cas, ça fout la trouille."'},
+      {c:'#ff4444',t:'[LIAISON] Dorkbot : "Ah ! Ah ! Je ne pensais pas en prendre deux d\'un coup !"'},
+      {c:'#ff88ff',t:'[LIAISON] Pénélope : "Nous n\'abandonnerons jamais !"'},
+      {c:'#00ff00',t:'[LIAISON] Connexion établie. Utilisez  recover  pour les rapatrier.'},
+    ];
+    const iv=setInterval(()=>{if(i<msgs.length){repairPrint([msgs[i]]);i++;}else clearInterval(iv);},900);
+  },
+  exit:()=>{
+    document.getElementById('s-repair').style.display='none';
+    document.getElementById('s-repair').classList.remove('active');
+    document.getElementById('s-desktop').classList.add('active');
+    document.getElementById('s-desktop').style.display='block';
+    toast('✓ Retour au bureau Vindows.');
+  },
+  clear:()=>{document.getElementById('repair-body').innerHTML='';},
+};
+function repairPrint(lines){
+  const body=document.getElementById('repair-body');
+  lines.forEach(l=>{const d=document.createElement('div');d.textContent=l.t;d.style.color=l.c||'#00ff00';body.appendChild(d);});
+  body.scrollTop=body.scrollHeight;
+}
+function repairKey(e){
+  if(e.key!=='Enter')return;
+  const inp=document.getElementById('repair-in');
+  const cmd=inp.value.trim().toLowerCase();inp.value='';
+  if(!cmd)return;
+  const d=document.createElement('div');d.textContent='REPAIR:C:\\> '+cmd;d.style.color='#88ff88';
+  document.getElementById('repair-body').appendChild(d);
+  if(repairCmds[cmd])repairCmds[cmd]();
+  else repairPrint([{c:'#ff6666',t:'\''+cmd+'\' n\'est pas reconnu. Tapez help.'}]);
+}
+
+// ===== NORMAL TERMINAL =====
+const termCmds={
+  help:()=>tP([
+    {c:'tg',t:'Commandes disponibles :'},
+    {c:'tb',t:'  help          Afficher cette aide'},
+    {c:'tb',t:'  scan          Analyser le système'},
+    {c:'tb',t:'  antivirus     État de l\'antivirus'},
+    {c:'tb',t:'  reseau        Informations réseau'},
+    {c:'tb',t:'  historique    Historique de navigation'},
+    {c:'tb',t:'  ip            Adresse IP'},
+    {c:'tb',t:'  virus         Informations sur Dorkbot'},
+    {c:'tb',t:'  liaison       Commander liaison (acte 4)'},
+    {c:'tb',t:'  whois         Identité utilisateur'},
+    {c:'tb',t:'  panier        État du panier Les 9 Belges'},
+    {c:'tb',t:'  clear         Vider le terminal'},
+  ]),
+  scan:()=>{
+    tP([{c:'ty',t:'Analyse en cours…'}]);
+    setTimeout(()=>tP([
+      {c:'tw',t:'[████████████████] 100%'},
+      {c:'tr',t:'MENACE : Trojan.LesNeufBelges.WebcamSpy'},
+      {c:'tr',t:'MENACE : Spyware.CardDataCollector'},
+      {c:'tr',t:'MENACE : Dorkbot.FritesEncrypt.v2'},
+      {c:'ty',t:'→ Lancez  antivirus  pour remédier.'},
+    ]),1500);
+  },
+  antivirus:()=>{
+    if(avInstalled){tP([{c:'tg',t:'Dr Avast v4.2.1 — Actif. Votre système est protégé.'}]);}
+    else{tP([{c:'tr',t:'AUCUN ANTIVIRUS INSTALLÉ !'}]);setTimeout(()=>{installAVPropose();},800);}
+  },
+  reseau:()=>tP([
+    {c:'tw',t:'Interface : Wi-Fi 6E'},
+    {c:'tg',t:'SSID : BelgeNet_5G'},
+    {c:'tw',t:'Débit : 54 Mbps  |  DNS : 8.8.8.8'},
+    {c:'ty',t:'Statut : Fenêtres ouvertes — risque d\'intrusion'},
+  ]),
+  historique:()=>tP([
+    {c:'tw',t:'[14:23] glouglou.fr — Page d\'accueil'},
+    {c:'tg',t:'[14:31] stihl.fr — 🔒 Site sécurisé'},
+    {c:'tr',t:'[14:47] les9belges.shop — 🔓 DANGEREUX — Dorkbot'},
+    {c:'tr',t:'[14:52] Webcam compromise — Photo prise ✓'},
+    {c:'tr',t:'[14:53] Données bancaires extraites'},
+  ]),
+  ip:()=>tP([
+    {c:'tw',t:'IP locale : 192.168.1.42'},
+    {c:'tw',t:'IP publique : 83.204.XX.XX'},
+    {c:'tr',t:'Localisation : Bruxelles (masquée par Dorkbot)'},
+  ]),
+  virus:()=>tP([
+    {c:'tr',t:'══════════ DORKBOT ══════════'},
+    {c:'tw',t:'Nom : Dorkbot.FritesEncrypt.v2'},
+    {c:'tw',t:'Type : Cheval de Troie / Webcam / Vol bancaire'},
+    {c:'tw',t:'Vecteur : les9belges.shop — fiche client'},
+    {c:'tw',t:'Complice : Le Vendeur (stagiaire sous-payé)'},
+    {c:'tr',t:'Statut : ACTIF — Maître du monde (en cours)'},
+    {c:'tg',t:'Faiblesse : Dr Avast (seringue anti-virale)'},
+  ]),
+  liaison:()=>{
+    tP([{c:'ty',t:'Établissement liaison avec l\'intérieur de l\'ordinateur…'}]);
+    const msgs=[
+      {c:'tw',t:'[LIAISON] Pénélope : "Qu\'est-ce qu\'on fait ici ?!"'},
+      {c:'tw',t:'[LIAISON] Colombine : "Ça fout la trouille !"'},
+      {c:'tr',t:'[LIAISON] Dorkbot : "Je ne pensais pas en prendre deux d\'un coup !"'},
+      {c:'tg',t:'[LIAISON] Liaison établie. Utilisez le terminal de réparation (touche C puis T).'},
+    ];
+    let i=0;const iv=setInterval(()=>{if(i<msgs.length){tP([msgs[i]]);i++;}else clearInterval(iv);},800);
+  },
+  whois:()=>tP([
+    {c:'tg',t:'Utilisateur : '+userName},
+    {c:'tw',t:'Âge (en lettres) : '+userAge},
+    {c:'tr',t:'Mot de passe Vindows : '+userPW+' (trop fort)'},
+    {c:'ty',t:'Niveau informatique : Débutant expert'},
+    {c:'tw',t:'Ordinateur : Rose (modèle Pénélope Pro)'},
+  ]),
+  panier:()=>{
+    if(panierItems.length===0){tP([{c:'td',t:'Panier vide.'}]);return;}
+    const lines=[{c:'ty',t:'Contenu du panier Les 9 Belges :'}];
+    panierItems.forEach(i=>lines.push({c:'tw',t:'  • '+i.name+' — '+i.price+'€'}));
+    lines.push({c:'tg',t:'Total : '+panierTotal+'€'});
+    tP(lines);
+  },
+  clear:()=>{document.getElementById('term-body').innerHTML='';},
+};
+function tP(lines){
+  const body=document.getElementById('term-body');
+  lines.forEach(l=>{const d=document.createElement('span');d.className='tl '+l.c;d.textContent=l.t;body.appendChild(d);});
+  body.scrollTop=body.scrollHeight;
+}
+function termKey(e){
+  if(e.key!=='Enter')return;
+  const inp=document.getElementById('term-in');
+  const cmd=inp.value.trim().toLowerCase();inp.value='';
+  if(!cmd)return;
+  const ptext=document.getElementById('term-prompt').textContent;
+  const d=document.createElement('span');d.className='tl td';d.textContent=ptext+cmd;
+  document.getElementById('term-body').appendChild(d);
+  if(termCmds[cmd])termCmds[cmd]();
+  else tP([{c:'tr',t:'\''+cmd+'\' n\'est pas reconnu. Tapez help.'}]);
+}
+
+// ===== START MENU =====
+function toggleStart(){const m=document.getElementById('start-menu');m.style.display=m.style.display==='block'?'none':'block';}
+function closeStart(){document.getElementById('start-menu').style.display='none';}
+
+// ===== SHORTCUTS =====
+function toggleShortcuts(){const p=document.getElementById('shortcuts-panel');p.style.display=p.style.display==='block'?'none':'block';}
+function wifiClick(){const s=['📶 BelgeNet_5G (54 Mbps)','📶 Signal excellent','⚠️ Réseau non sécurisé — fenêtres ouvertes !','📡 Reconnexion…'];toast(s[Math.floor(Math.random()*s.length)]);}
+
+// ===== DRAG & RESIZE =====
+function drag(wId,tbId){
+  const w=document.getElementById(wId),tb=document.getElementById(tbId);
+  let on=false,ox=0,oy=0;
+  tb.addEventListener('mousedown',e=>{on=true;ox=e.clientX-w.offsetLeft;oy=e.clientY-w.offsetTop;w.style.zIndex=60;});
+  document.addEventListener('mousemove',e=>{if(!on)return;w.style.left=(e.clientX-ox)+'px';w.style.top=(e.clientY-oy)+'px';w.style.right='auto';w.style.bottom='auto';});
+  document.addEventListener('mouseup',()=>on=false);
+}
+function resize(wId,hId){
+  const w=document.getElementById(wId),h=document.getElementById(hId);
+  let on=false,sx=0,sy=0,sw=0,sh=0;
+  h.addEventListener('mousedown',e=>{on=true;sx=e.clientX;sy=e.clientY;sw=w.offsetWidth;sh=w.offsetHeight;e.preventDefault();});
+  document.addEventListener('mousemove',e=>{if(!on)return;w.style.width=Math.max(400,sw+e.clientX-sx)+'px';w.style.height=Math.max(280,sh+e.clientY-sy)+'px';});
+  document.addEventListener('mouseup',()=>on=false);
+}
+drag('win-browser','wb-tb');drag('win-terminal','wt-tb');
+resize('win-browser','br-resize');resize('win-terminal','term-resize');
+
+// ===== KEYBOARD =====
+document.addEventListener('keydown',e=>{
+  // POST screen — any key
+  if(document.getElementById('s-post').classList.contains('active')){
+    if(document.getElementById('post-press').style.display!=='none'){showScreen('s-lang');}
+    return;
+  }
+  // Lang screen — Enter
+  if(document.getElementById('s-lang').classList.contains('active')&&e.key==='Enter'){startBoot();return;}
+  // Login — Enter/Space
+  if(document.getElementById('s-login').classList.contains('active')&&(e.key==='Enter'||e.code==='Space')){doLogin();return;}
+
+  // REPAIR mode — T opens repair
+  if(document.getElementById('attack-bsod').classList.contains('show')&&e.key.toUpperCase()==='T'){openRepair();return;}
+  // In repair mode — don't intercept
+  if(document.getElementById('s-repair').style.display==='flex')return;
+
+  // Desktop
+  if(!document.getElementById('s-desktop').classList.contains('active'))return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+
+  const k=e.key.toUpperCase();
+
+  // Non-antivirus key → show recall (if not installed)
+  if(!avInstalled&&!['V','F','C','T','G','S','B','D','M','K','?','ESCAPE'].includes(k)){
+    showRecall();
+  }
+
+  switch(k){
+    case 'G': openBrowser();navHome();break;
+    case 'S': openBrowser();document.getElementById('gg-input').value='stihl tronçonneuse';doSearch();break;
+    case 'B': openBrowser();document.getElementById('gg-input').value='mode vêtements belge';doSearch();break;
+    case 'V': showAV();break;
+    case 'F': fixVirus();break;
+    case 'D': document.getElementById('win-dorkbot').style.display='block';break;
+    case 'K': toggleCadenas();break;
+    case 'T': openTerminal();break;
+    case 'C': startAttack();break;
+    case 'M': showCopyPaste();break;
+    case '?': toggleShortcuts();break;
+    case 'ESCAPE':
+      closeAV();
+      document.getElementById('win-avok').style.display='none';
+      document.getElementById('win-dorkbot').style.display='none';
+      document.getElementById('win-copypaste').style.display='none';
+      document.getElementById('shortcuts-panel').style.display='none';
+      document.getElementById('start-menu').style.display='none';
+      document.getElementById('gg-pw-modal').classList.remove('show');
+      document.getElementById('st-popup-overlay').classList.remove('show');
+      document.getElementById('b9-fenetre-popup').classList.remove('show');
+      break;
+  }
+});
+
+// Close start on outside click
+document.addEventListener('click',e=>{
+  const sm=document.getElementById('start-menu');
+  if(sm.style.display==='block'&&!sm.contains(e.target)&&!e.target.closest('.tb-start'))sm.style.display='none';
+});
+</script>
+</body>
+</html>
